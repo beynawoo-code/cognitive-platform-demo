@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>季度绩效详情</title>
+  <link rel="stylesheet" href="../portal.css" />
+</head>
+<body data-shell="portal" data-active="me">
+<div id="chrome"></div>
+<main class="main">
+<div id="quarterly-detail"></div>
+</main>
+<script src="quarterly-perf-mock.js"></script>
+<script src="quarterly-perf.js"></script>
+<script>
+  QuarterlyPerf.mountDetail(document.getElementById("quarterly-detail"));
+</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

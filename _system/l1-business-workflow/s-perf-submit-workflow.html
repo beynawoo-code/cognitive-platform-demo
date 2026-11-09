@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>提报绩效 S · 功能流程</title>
+  <meta name="author" content="@beynawoo-code" />
+  <style>
+    :root {
+      --bg:#07090f; --card:#0e1422; --bd:rgba(255,255,255,.07);
+      --txt:#dde6f5; --mut:#7a90b0; --dim:#4a5e78;
+      --blue:#3b82f6; --cyan:#06b6d4; --amber:#f59e0b; --green:#22c55e;
+      --font:Inter,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--txt);padding:36px 40px 72px;line-height:1.55;font-size:14px}
+    a{color:#7eb3ff}
+    .badge{display:inline-flex;padding:5px 14px;border-radius:99px;background:rgba(59,130,246,.18);border:1px solid rgba(59,130,246,.35);font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.08em}
+    h1{font-size:30px;font-weight:900;margin:12px 0 8px;letter-spacing:-.03em}
+    .lead{color:var(--mut);max-width:820px;margin-bottom:28px}
+    h2{font-size:18px;font-weight:800;margin:36px 0 14px}
+    .note{border:1px dashed rgba(245,158,11,.4);color:var(--amber);padding:10px 14px;border-radius:10px;font-size:12px;margin:16px 0}
+    .chart{overflow-x:auto;margin:4px 0 16px;max-width:720px;border:1px solid var(--bd);border-radius:12px;background:#0b101a}
+    .chart svg{display:block;width:100%;height:auto}
+    .legend{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 8px;color:var(--mut);font-size:12px}
+    .legend i{display:inline-block;width:18px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+    .lg-open{border:1.5px solid var(--green);background:#0e1422}
+    .lg-wait{border:1.5px solid var(--amber);background:#0e1422}
+    .lg-ask{border:1.5px solid var(--cyan);background:#141b2e}
+    .lg-dash{border:1.5px dashed var(--amber);background:transparent}
+    table{width:100%;max-width:820px;border-collapse:collapse;font-size:12.5px;background:var(--card);border-radius:12px;overflow:hidden}
+    th,td{padding:8px 10px;border-bottom:1px solid var(--bd);text-align:left;vertical-align:top}
+    th{color:var(--dim);font-size:10px;letter-spacing:.06em}
+    td{color:var(--mut)} td:first-child{color:var(--txt)}
+    footer{margin-top:48px;color:var(--mut);font-size:12px}
+    @media (max-width:720px){ body{padding:24px 16px 48px} }
+  </style>
+</head>
+<body>
+  <span class="badge">L1 · 绩效 S</span>
+  <h1>提报绩效 S</h1>
+  <p class="lead">一个半年一条记录。HRBP 定六个窗口，员工提报并回写中期与最终，主管在接收页写反馈。详情事实源见同目录 markdown。</p>
+  <p class="note">开始提报早于截止提报，截止提报不晚于开放中期，开放中期早于截止中期，截止中期不晚于开放最终，开放最终早于截止最终。</p>
+
+  <h2>流程</h2>
+  <div class="legend">
+    <span><i class="lg-open"></i>窗口内可写</span>
+    <span><i class="lg-wait"></i>未开放或只读</span>
+    <span><i class="lg-ask"></i>判断</span>
+    <span><i class="lg-dash"></i>HRBP 只读查看</span>
+  </div>
+  <div class="chart">
+    <svg viewBox="0 0 660 580" role="img" aria-label="提报绩效 S 功能流程图">
+      <title>提报绩效 S 功能流程图</title>
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#7a90b0"/>
+        </marker>
+        <marker id="arr-amber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#f59e0b"/>
+        </marker>
+      </defs>
+      <style>
+        .n{fill:#0e1422;stroke:#3b82f6;stroke-width:1.5}
+        .open{stroke:#22c55e}
+        .wait{stroke:#f59e0b}
+        .ask{fill:#141b2e;stroke:#06b6d4;stroke-width:1.5}
+        .wire{fill:none;stroke:#7a90b0;stroke-width:1.5;marker-end:url(#arr)}
+        .wire-plain{fill:none;stroke:#7a90b0;stroke-width:1.5}
+        .dash{fill:none;stroke:#f59e0b;stroke-width:1.5;stroke-dasharray:5 4;marker-end:url(#arr-amber)}
+        .t{fill:#dde6f5;font-size:11px;font-weight:650;text-anchor:middle}
+        .e{fill:#9fb0c8;font-size:9px;text-anchor:middle}
+      </style>
+
+      <rect class="n" x="186" y="4" width="148" height="24" rx="5"/>
+      <text class="t" x="260" y="20">HRBP 定六个窗口</text>
+      <rect class="n wait" x="400" y="4" width="132" height="24" rx="5" stroke-dasharray="4 3"/>
+      <text class="t" x="466" y="20">只读看全员</text>
+      <path class="dash" d="M334,16 H400"/>
+
+      <path class="wire" d="M260,28 V40"/>
+      <polygon class="ask" points="260,40 302,58 260,76 218,58"/>
+      <text class="t" x="260" y="62">提报窗口</text>
+
+      <path class="wire" d="M218,58 H68 V86"/>
+      <text class="e" x="140" y="52">未开放</text>
+      <rect class="n wait" x="4" y="86" width="128" height="24" rx="5"/>
+      <text class="t" x="68" y="102">不能新申请</text>
+
+      <path class="wire" d="M302,58 H475 V86"/>
+      <text class="e" x="390" y="52">进行中</text>
+      <rect class="n open" x="400" y="86" width="150" height="24" rx="5"/>
+      <text class="t" x="475" y="102">员工申请</text>
+
+      <path class="wire" d="M475,110 V122"/>
+      <rect class="n open" x="400" y="122" width="150" height="24" rx="5"/>
+      <text class="t" x="475" y="138">填 3 条结果和挑战</text>
+
+      <path class="wire" d="M475,146 V160"/>
+      <polygon class="ask" points="475,160 512,176 475,192 438,176"/>
+      <text class="t" x="475" y="180">满 3 条?</text>
+      <path class="wire" d="M512,176 H620 V134 H550"/>
+      <text class="e" x="636" y="158">未满</text>
+      <path class="wire" d="M475,192 V204"/>
+      <text class="e" x="498" y="202">已满</text>
+      <rect class="n open" x="400" y="204" width="150" height="24" rx="5"/>
+      <text class="t" x="475" y="220">提交并记时间</text>
+
+      <path class="wire" d="M68,110 V246 H186"/>
+      <path class="wire" d="M475,228 V246 H334"/>
+      <rect class="n" x="186" y="234" width="148" height="24" rx="5"/>
+      <text class="t" x="260" y="250">个人中心</text>
+
+      <path class="wire" d="M260,258 V272"/>
+      <polygon class="ask" points="260,272 302,290 260,308 218,290"/>
+      <text class="t" x="260" y="294">中期窗口</text>
+      <path class="wire" d="M218,290 H68 V322"/>
+      <text class="e" x="140" y="284">未开放</text>
+      <rect class="n wait" x="4" y="322" width="128" height="24" rx="5"/>
+      <text class="t" x="68" y="338">中期只读</text>
+      <path class="wire" d="M302,290 H475 V322"/>
+      <text class="e" x="390" y="284">开放</text>
+      <rect class="n open" x="400" y="322" width="150" height="24" rx="5"/>
+      <text class="t" x="475" y="338">员工写中期回顾</text>
+      <path class="wire" d="M475,346 V358"/>
+      <rect class="n open" x="400" y="358" width="150" height="24" rx="5"/>
+      <text class="t" x="475" y="374">主管写中期反馈</text>
+
+      <path class="wire-plain" d="M68,346 V404 H260"/>
+      <path class="wire-plain" d="M475,382 V404 H260"/>
+      <path class="wire" d="M260,404 V416"/>
+      <polygon class="ask" points="260,416 302,434 260,452 218,434"/>
+      <text class="t" x="260" y="438">最终窗口</text>
+      <path class="wire" d="M218,434 H68 V466"/>
+      <text class="e" x="140" y="428">未开放</text>
+      <rect class="n wait" x="4" y="466" width="128" height="24" rx="5"/>
+      <text class="t" x="68" y="482">最终只读</text>
+      <path class="wire" d="M302,434 H475 V466"/>
+      <text class="e" x="390" y="428">开放</text>
+      <rect class="n open" x="400" y="466" width="150" height="24" rx="5"/>
+      <text class="t" x="475" y="482">员工写最终结果</text>
+      <path class="wire" d="M475,490 V502"/>
+      <rect class="n open" x="400" y="502" width="150" height="24" rx="5"/>
+      <text class="t" x="475" y="518">主管写最终反馈</text>
+      <path class="wire-plain" d="M68,490 V544 H260"/>
+      <path class="wire-plain" d="M475,526 V544 H260"/>
+      <path class="wire" d="M260,544 V552"/>
+      <rect class="n wait" x="186" y="552" width="148" height="22" rx="5"/>
+      <text class="t" x="260" y="567">截止后只读</text>
+    </svg>
+  </div>
+
+  <h2>谁写哪一栏</h2>
+  <table>
+    <tr><th>内容</th><th>员工</th><th>主管</th><th>HRBP</th></tr>
+    <tr><td>预期业绩结果、挑战</td><td>提报窗口内填写</td><td>只读</td><td>只读</td></tr>
+    <tr><td>中期回顾</td><td>中期窗口内填写</td><td>只读</td><td>只读</td></tr>
+    <tr><td>中期反馈</td><td>只读</td><td>中期窗口内，绩效接收</td><td>只读</td></tr>
+    <tr><td>最终结果</td><td>最终窗口内填写</td><td>只读</td><td>只读</td></tr>
+    <tr><td>最终反馈</td><td>只读</td><td>最终窗口内，绩效接收</td><td>只读</td></tr>
+  </table>
+  <footer>L1 · <a href="s-perf-submit-workflow.md">事实源</a> · <a href="cognitive-platform-workflow.md">现网总工作流</a></footer>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>晋升分析台 · BP</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="admin" data-active="promotion">
+<div id="chrome"></div>
+<main class="main">
+<p class="route">静态演示 · 假数据 · 规则见 <code>promotion-eligibility.js</code></p>
+<h1>晋升分析台</h1>
+<p class="lead">窗口 <b id="win-label"></b>，截止 <b id="win-cutoff"></b>。取最近 4 次已关闭半年度绩效，计分 S=2 / A=1.5 / B+=1 / B=0.5。</p>
+
+<div class="card promo-toolbar">
+  <label>筛选状态</label>
+  <select id="filter-status">
+    <option value="">全部</option>
+    <option value="ELIGIBLE_RED">达红线</option>
+    <option value="ELIGIBLE_YELLOW">达黄线</option>
+    <option value="NEAR_MISS">近达标</option>
+    <option value="BELOW_YELLOW">未达黄线</option>
+    <option value="FAIL_MIN_GRADE">单期低于 B</option>
+    <option value="BLOCKED_THRESHOLD">门槛未满足</option>
+    <option value="INSUFFICIENT_CYCLES">四期不足</option>
+  </select>
+  <span class="s-hint" id="count-hint"></span>
+</div>
+
+<div class="card s-scroll">
+  <table class="s-table promo-bp-table" id="bp-table">
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>部门</th>
+        <th>现层级→目标</th>
+        <th>四期（原档）</th>
+        <th>有效计分</th>
+        <th>均值</th>
+        <th>总分</th>
+        <th>结论</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="bp-body"></tbody>
+  </table>
+</div>
+
+<p class="lead">员工自助页：<a href="../portal/promotion-readiness.html">晋升准备度</a></p>
+</main>
+<script src="../promotion-eligibility.js"></script>
+<script>
+(function () {
+  var W = PromotionDemo.WINDOW;
+  document.getElementById("win-label").textContent = W.label;
+  document.getElementById("win-cutoff").textContent = W.cutoff;
+
+  function scoreRow(slots) {
+    return slots.map(function (s) {
+      if (s.missing) return "—";
+      var sc = s.effectiveScore != null ? s.effectiveScore.toFixed(1) : "—";
+      return sc + (s.normalized ? "*" : "");
+    }).join(" / ");
+  }
+
+  function gradeRow(slots) {
+    return slots.map(function (s) {
+      if (s.missing) return "—";
+      return s.display + (s.normalized ? "→A" : "");
+    }).join(" · ");
+  }
+
+  function render() {
+    var f = document.getElementById("filter-status").value;
+    var rows = PromotionDemo.allResults().filter(function (r) {
+      return !f || r.status === f;
+    });
+    document.getElementById("count-hint").textContent = "共 " + rows.length + " 人";
+    document.getElementById("bp-body").innerHTML = rows.map(function (r) {
+      var e = r.employee;
+      var avg = r.avg != null ? r.avg.toFixed(3) : "—";
+      var tot = r.total != null ? r.total.toFixed(1) : "—";
+      return "<tr>" +
+        "<td><b>" + PromotionDemo.escapeText(e.name) + "</b></td>" +
+        "<td>" + PromotionDemo.escapeText(e.dept) + "</td>" +
+        "<td>" + PromotionDemo.escapeText(e.currentLevel) + "→" + PromotionDemo.escapeText(r.targetLevel) + "</td>" +
+        "<td class=\"promo-td-grades\">" + PromotionDemo.escapeText(gradeRow(r.slots)) + "</td>" +
+        "<td>" + PromotionDemo.escapeText(scoreRow(r.slots)) + "</td>" +
+        "<td>" + avg + "</td>" +
+        "<td>" + tot + "</td>" +
+        "<td><span class=\"promo-pill " + r.statusClass + "\">" + PromotionDemo.escapeText(r.statusLabel) + "</span></td>" +
+        "<td><a href=\"../portal/promotion-readiness.html?id=" + encodeURIComponent(e.id) + "\">详情</a></td>" +
+        "</tr>";
+    }).join("");
+  }
+
+  document.getElementById("filter-status").addEventListener("change", render);
+  render();
+})();
+</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>价值点考试</title>
+  <link rel="stylesheet" href="./portal-shell.css" />
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./me.html">认知平台 <span>价值点考试</span></a>
+    <nav class="tabs"><a href="./me.html">个人中心</a><a href="./learn.html">素材</a></nav>
+  </header>
+  <div class="wrap">
+    <h1 class="h" id="page-title">选择价值点考试</h1>
+    <p class="meta" id="page-desc">可反复考。达到个人中心里配置的及格条件后，该价值点标绿。</p>
+    <div id="picker" class="card"></div>
+    <form id="paper" class="card" style="display:none"></form>
+    <div class="card" id="result" style="display:none"></div>
+  </div>
+  <script src="./demo-state.js"></script>
+  <script>
+    var D = VpslpDemo;
+    var state = D.load();
+    var params = new URLSearchParams(location.search);
+    var pointId = params.get("p");
+    var focusMat = params.get("m");
+    if (!pointId && focusMat) {
+      var mat0 = D.materialById(focusMat);
+      if (mat0) pointId = mat0.pointId;
+    }
+    var points = D.POINTS.filter(function (p) { return D.materialsForPoint(p.id).length; });
+
+    function paintPicker() {
+      document.getElementById("picker").innerHTML = "<h2>可考价值点</h2><div class='actions'>" + points.map(function (p) {
+        var st = D.greenStatus(state, p.id);
+        return "<a class='btn ghost' href='./exam.html?p=" + p.id + "'>" + p.name + " · " + st.label + "</a>";
+      }).join("") + "</div>";
+    }
+
+    if (!pointId) {
+      paintPicker();
+    } else {
+      var mats = D.materialsForPoint(pointId);
+      document.getElementById("picker").style.display = "none";
+      document.getElementById("page-title").textContent = "考试 · " + D.pointName(pointId);
+      var rule = D.ruleOf(state);
+      document.getElementById("page-desc").textContent = "及格分 " + rule.passScore + "，需及格 " + rule.minPassCount + " 次。当前 " + D.greenStatus(state, pointId).label + "。";
+      var paper = document.getElementById("paper");
+      paper.style.display = "block";
+      paper.innerHTML = mats.map(function (m, i) {
+        return "<div class='q'><b>" + (i + 1) + ". 「" + m.title + "」属于哪一类？</b>" +
+          ["理论", "体系", "案例", "认知"].map(function (k) {
+            return "<label><input type='radio' name='" + m.id + "' value='" + k + "' /> " + k + "</label>";
+          }).join("") + "</div>";
+      }).join("") + "<button class='btn' type='submit'>交卷</button> <a class='btn ghost' href='./learn.html'>回素材</a>";
+      paper.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var hit = 0;
+        mats.forEach(function (m) {
+          var picked = document.querySelector("input[name='" + m.id + "']:checked");
+          var it = D.touch(state, m.id);
+          if (picked) {
+            it.examDone = true;
+            it.examAnswer = picked.value;
+            if (picked.value === m.kind) hit += 1;
+          }
+        });
+        var score = mats.length ? Math.round(hit / mats.length * 100) : 0;
+        D.recordPointExam(state, pointId, score);
+        D.save(state);
+        var st = D.greenStatus(state, pointId);
+        var box = document.getElementById("result");
+        box.style.display = "block";
+        box.innerHTML = "<h2>" + score + " 分 · " + st.label + "</h2><p class='meta'>" +
+          (st.status === "on" ? "有效至 " + st.expiresAt.slice(0, 10) + "。到期后需再考一次及格才能保持绿色。" : "未达到配置的及格条件。") +
+          "</p><div class='row'><a class='btn' href='./me.html'>回个人中心</a><a class='btn ghost' href='./exam.html?p=" + pointId + "'>再考一次</a></div>";
+      });
+    }
+  </script>
+</body>
+</html>

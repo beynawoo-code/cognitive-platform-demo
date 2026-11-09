@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>认知平台 · 4期 VPSLP 专业成长功能设计</title>
+  <meta name="author" content="@beynawoo-code" />
+  <style>
+    :root {
+      --bg: #07090f; --panel: #0e1422; --bd: rgba(255,255,255,.08);
+      --txt: #dde6f5; --mut: #7a90b0; --font: Inter, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: var(--bg); color: var(--txt); line-height: 1.55; padding: 28px 40px 72px; }
+    .badge { display: inline-flex; padding: 5px 14px; border-radius: 99px; background: rgba(168,85,247,.18); border: 1px solid rgba(168,85,247,.4); font-size: 11px; font-weight: 700; color: #c084fc; letter-spacing: .08em; }
+    h1 { font-size: 28px; font-weight: 900; margin: 12px 0 8px; }
+    .sub { color: var(--mut); font-size: 14px; max-width: 880px; margin-bottom: 22px; }
+    .sub b { color: var(--txt); }
+    .eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .08em; color: #e879f9; margin: 22px 0 8px; }
+    .hint { font-size: 13px; color: var(--mut); margin: 0 0 10px; }
+    .hint b { color: var(--txt); }
+    .person-work-chart { width: 100%; border: 1px solid var(--bd); border-radius: 12px; background: var(--panel); padding: 8px 10px; }
+    .person-work-chart svg { display: block; width: 100%; height: auto; }
+    .path { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin: 0 0 22px; }
+    .step { flex: 1 1 120px; min-width: 120px; background: var(--panel); border: 1px solid var(--bd); border-radius: 10px; padding: 12px 12px 14px; }
+    .step .n { font-size: 10px; font-weight: 800; color: #93c5fd; letter-spacing: .06em; }
+    .step .t { font-size: 13px; font-weight: 800; margin: 4px 0 6px; }
+    .step p { font-size: 12px; color: var(--mut); line-height: 1.55; }
+    .step.ex { border-color: rgba(232,121,249,.35); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+    @media (max-width: 800px) { body { padding: 20px 16px 56px; } .grid { grid-template-columns: 1fr; } }
+    .card { background: var(--panel); border: 1px solid var(--bd); border-radius: 12px; padding: 14px 16px; }
+    .card h3 { font-size: 13px; font-weight: 800; color: #e879f9; margin-bottom: 8px; }
+    .card p, .card li { font-size: 12.5px; color: var(--mut); }
+    .card ul { padding-left: 18px; }
+    .card li + li { margin-top: 4px; }
+    .card b { color: var(--txt); }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: var(--panel); border-radius: 12px; overflow: hidden; }
+    th, td { border-bottom: 1px solid var(--bd); padding: 10px 12px; text-align: left; vertical-align: top; color: var(--mut); }
+    th { color: var(--txt); font-size: 11px; letter-spacing: .04em; background: rgba(59,130,246,.1); }
+    td:first-child { color: var(--txt); font-weight: 700; white-space: nowrap; }
+    .tag { display: inline-block; font-size: 11px; padding: 2px 7px; margin: 2px 4px 2px 0; border: 1px solid var(--bd); border-radius: 4px; color: var(--txt); }
+    .src { font-size: 10px; color: #c4b5fd; }
+    footer { margin-top: 36px; font-size: 12px; color: var(--mut); }
+    a { color: #7eb3ff; }
+  </style>
+</head>
+<body>
+  <span class="badge">4期 · VPSLP FUNCTION</span>
+  <h1>专业成长 · 可视化功能设计</h1>
+  <p class="sub">评审后口径：<b>自主浏览 + 价值点考试点绿</b>。不设导师制、学习计划和导师工作台。绿标默认一次达到配置及格分即点亮，有效半年，到期重考。详见 <a href="./phase4-review-design.html">评审后功能设计</a>。</p>
+
+  <div class="eyebrow">以人为中心 · 成长方法（全节点）</div>
+  <p class="hint">内圈养分：<b>评估 · 学习 · 考试 · 分享</b>。外圈环境：价值梳理、素材供给、导师选定、学习总结、实践案例。考试树与互动列是支撑功能。</p>
+  <div class="person-work-chart">
+    <svg viewBox="0 0 1160 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="4期成长方法全节点">
+      <defs>
+        <marker id="pw-arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+          <path d="M0,0 L7,3.5 L0,7 Z" fill="#5c6d82" />
+        </marker>
+      </defs>
+      <text x="16" y="24" text-anchor="start" fill="#86efac" font-size="10">角色共识 · 视角共识 · 技术密度  →  组织专业度</text>
+      <rect x="718" y="46" width="294" height="300" rx="14" fill="rgba(232,121,249,.04)" stroke="#c084fc" stroke-width="1.3" stroke-dasharray="6 4" />
+      <circle cx="460" cy="188" r="150" fill="none" stroke="rgba(45,212,191,.4)" stroke-dasharray="5 6" />
+      <line x1="460" y1="188" x2="460" y2="111" stroke="#5c6d82" stroke-width="1.2" />
+      <line x1="460" y1="188" x2="517" y2="188" stroke="#5c6d82" stroke-width="1.2" />
+      <line x1="460" y1="188" x2="403" y2="188" stroke="#5c6d82" stroke-width="1.2" />
+      <line x1="460" y1="188" x2="460" y2="265" stroke="#5c6d82" stroke-width="1.2" />
+      <line x1="460" y1="89" x2="460" y2="42" stroke="#5c6d82" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#pw-arr)" />
+      <line x1="579" y1="177" x2="598" y2="118" stroke="#5c6d82" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#pw-arr)" />
+      <line x1="579" y1="199" x2="598" y2="214" stroke="#5c6d82" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#pw-arr)" />
+      <line x1="341" y1="177" x2="322" y2="118" stroke="#5c6d82" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#pw-arr)" />
+      <line x1="341" y1="199" x2="322" y2="214" stroke="#5c6d82" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#pw-arr)" />
+      <circle cx="460" cy="188" r="50" fill="rgba(232,121,249,.14)" stroke="#e879f9" stroke-width="1.8" />
+      <text x="460" y="184" text-anchor="middle" fill="#dde6f5" font-size="11" font-weight="800">一线岗位的人</text>
+      <text x="460" y="202" text-anchor="middle" fill="#c084fc" font-size="9">专业成长 · 职业成长</text>
+      <circle cx="460" cy="188" r="88" fill="none" stroke="rgba(96,165,250,.5)" stroke-dasharray="3 4" />
+      <rect x="429" y="89" width="62" height="22" rx="7" fill="rgba(59,130,246,.14)" stroke="#60a5fa" />
+      <text x="460" y="104" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="700">评估</text>
+      <rect x="517" y="177" width="62" height="22" rx="7" fill="rgba(59,130,246,.14)" stroke="#60a5fa" />
+      <text x="548" y="192" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="700">学习</text>
+      <rect x="341" y="177" width="62" height="22" rx="7" fill="rgba(59,130,246,.14)" stroke="#60a5fa" />
+      <text x="372" y="192" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="700">分享</text>
+      <rect x="429" y="265" width="62" height="22" rx="7" fill="rgba(59,130,246,.14)" stroke="#60a5fa" />
+      <text x="460" y="280" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="700">考试</text>
+      <line x1="460" y1="287" x2="364" y2="310" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="460" y1="287" x2="532" y2="310" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <rect x="304" y="310" width="120" height="28" rx="8" fill="rgba(232,121,249,.1)" stroke="#e879f9" />
+      <text x="364" y="329" text-anchor="middle" fill="#e879f9" font-size="10" font-weight="700">题库供给</text>
+      <rect x="472" y="310" width="120" height="28" rx="8" fill="rgba(232,121,249,.1)" stroke="#e879f9" />
+      <text x="532" y="329" text-anchor="middle" fill="#e879f9" font-size="10" font-weight="700">考试管理</text>
+      <line x1="364" y1="338" x2="364" y2="348" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="364" y1="338" x2="364" y2="374" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="532" y1="338" x2="532" y2="348" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="532" y1="338" x2="532" y2="374" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <rect x="304" y="348" width="120" height="22" rx="6" fill="rgba(59,130,246,.1)" stroke="#60a5fa" />
+      <text x="364" y="364" text-anchor="middle" fill="#93c5fd" font-size="9.5" font-weight="700">提报考题</text>
+      <rect x="304" y="374" width="120" height="22" rx="6" fill="rgba(59,130,246,.1)" stroke="#60a5fa" />
+      <text x="364" y="390" text-anchor="middle" fill="#93c5fd" font-size="9.5" font-weight="700">考题审核</text>
+      <rect x="472" y="348" width="120" height="22" rx="6" fill="rgba(59,130,246,.1)" stroke="#60a5fa" />
+      <text x="532" y="364" text-anchor="middle" fill="#93c5fd" font-size="9.5" font-weight="700">参加考试</text>
+      <rect x="472" y="374" width="120" height="22" rx="6" fill="rgba(59,130,246,.1)" stroke="#60a5fa" />
+      <text x="532" y="390" text-anchor="middle" fill="#93c5fd" font-size="9.5" font-weight="700">考试结果</text>
+      <rect x="392" y="14" width="136" height="28" rx="8" fill="rgba(232,121,249,.1)" stroke="#e879f9" />
+      <text x="460" y="33" text-anchor="middle" fill="#e879f9" font-size="10" font-weight="700">价值梳理</text>
+      <rect x="538" y="118" width="120" height="28" rx="8" fill="rgba(232,121,249,.1)" stroke="#e879f9" />
+      <text x="598" y="137" text-anchor="middle" fill="#e879f9" font-size="10" font-weight="700">素材供给</text>
+      <line x1="658" y1="132" x2="888" y2="70" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="658" y1="132" x2="888" y2="100" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="658" y1="132" x2="888" y2="130" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="658" y1="132" x2="888" y2="160" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <rect x="888" y="58" width="76" height="22" rx="6" fill="rgba(232,121,249,.08)" stroke="#c084fc" />
+      <text x="926" y="74" text-anchor="middle" fill="#e9d5ff" font-size="9.5" font-weight="700">理论</text>
+      <rect x="888" y="88" width="76" height="22" rx="6" fill="rgba(232,121,249,.08)" stroke="#c084fc" />
+      <text x="926" y="104" text-anchor="middle" fill="#e9d5ff" font-size="9.5" font-weight="700">体系</text>
+      <rect x="888" y="118" width="76" height="22" rx="6" fill="rgba(232,121,249,.08)" stroke="#c084fc" />
+      <text x="926" y="134" text-anchor="middle" fill="#e9d5ff" font-size="9.5" font-weight="700">案例</text>
+      <rect x="888" y="148" width="76" height="22" rx="6" fill="rgba(232,121,249,.08)" stroke="#c084fc" />
+      <text x="926" y="164" text-anchor="middle" fill="#e9d5ff" font-size="9.5" font-weight="700">认知</text>
+      <rect x="538" y="214" width="120" height="28" rx="8" fill="rgba(232,121,249,.1)" stroke="#e879f9" />
+      <text x="598" y="233" text-anchor="middle" fill="#e879f9" font-size="10" font-weight="700">自主浏览</text>
+      <line x1="658" y1="228" x2="888" y2="208" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="658" y1="228" x2="888" y2="236" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="658" y1="228" x2="888" y2="264" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <rect x="888" y="196" width="76" height="22" rx="6" fill="rgba(232,121,249,.08)" stroke="#c084fc" />
+      <text x="926" y="212" text-anchor="middle" fill="#e9d5ff" font-size="9.5" font-weight="700">浏览</text>
+      <rect x="888" y="224" width="76" height="22" rx="6" fill="rgba(232,121,249,.08)" stroke="#c084fc" />
+      <text x="926" y="240" text-anchor="middle" fill="#e9d5ff" font-size="9.5" font-weight="700">评论</text>
+      <rect x="888" y="252" width="76" height="22" rx="6" fill="rgba(232,121,249,.08)" stroke="#c084fc" />
+      <text x="926" y="268" text-anchor="middle" fill="#e9d5ff" font-size="9.5" font-weight="700">收藏</text>
+      <text x="865" y="300" text-anchor="middle" fill="#c4b5fd" font-size="10">考试达到配置及格条件后，价值点标绿。</text>
+      <text x="865" y="318" text-anchor="middle" fill="#c4b5fd" font-size="10">绿标半年有效，到期需重考。</text>
+      <line x1="1012" y1="99" x2="1030" y2="99" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="1012" y1="147" x2="1030" y2="147" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="1012" y1="195" x2="1030" y2="195" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="1012" y1="243" x2="1030" y2="243" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <line x1="1012" y1="291" x2="1030" y2="291" stroke="#5c6d82" stroke-width="1" stroke-dasharray="3 3" />
+      <text x="1076" y="62" text-anchor="middle" fill="#5eead4" font-size="9" font-weight="700">统一互动与触达</text>
+      <rect x="1030" y="88" width="92" height="22" rx="6" fill="rgba(20,184,166,.12)" stroke="#2dd4bf" />
+      <text x="1076" y="104" text-anchor="middle" fill="#5eead4" font-size="9.5" font-weight="700">浏览</text>
+      <rect x="1030" y="136" width="92" height="22" rx="6" fill="rgba(20,184,166,.12)" stroke="#2dd4bf" />
+      <text x="1076" y="152" text-anchor="middle" fill="#5eead4" font-size="9.5" font-weight="700">有用</text>
+      <rect x="1030" y="184" width="92" height="22" rx="6" fill="rgba(20,184,166,.12)" stroke="#2dd4bf" />
+      <text x="1076" y="200" text-anchor="middle" fill="#5eead4" font-size="9.5" font-weight="700">无用</text>
+      <rect x="1030" y="232" width="92" height="22" rx="6" fill="rgba(20,184,166,.12)" stroke="#2dd4bf" />
+      <text x="1076" y="248" text-anchor="middle" fill="#5eead4" font-size="9.5" font-weight="700">收藏</text>
+      <rect x="1030" y="280" width="92" height="22" rx="6" fill="rgba(20,184,166,.12)" stroke="#2dd4bf" />
+      <text x="1076" y="296" text-anchor="middle" fill="#5eead4" font-size="9.5" font-weight="700">评论</text>
+      <rect x="262" y="118" width="120" height="28" rx="8" fill="rgba(232,121,249,.1)" stroke="#e879f9" />
+      <text x="322" y="137" text-anchor="middle" fill="#e879f9" font-size="10" font-weight="700">学习总结</text>
+      <rect x="262" y="214" width="120" height="28" rx="8" fill="rgba(232,121,249,.1)" stroke="#e879f9" />
+      <text x="322" y="233" text-anchor="middle" fill="#e879f9" font-size="10" font-weight="700">实践案例</text>
+    </svg>
+  </div>
+
+  <div class="eyebrow">自主路径 · 考试点绿</div>
+  <p class="hint">不制定学习计划。岗位价值点直接可浏览、可考。点绿条件由后台配置，默认一次 ≥ 80 分。</p>
+  <div class="path">
+    <div class="step"><div class="n">01</div><div class="t">看价值点</div><p>按岗位列出价值点，不勾选本轮学习范围。</p></div>
+    <div class="step"><div class="n">02</div><div class="t">自主浏览</div><p>理论 / 体系 / 案例 / 认知。评论与收藏不作为点绿条件。</p></div>
+    <div class="step"><div class="n">03</div><div class="t">价值点考试</div><p>可反复交卷。达到配置的及格次数后标绿。</p></div>
+    <div class="step ex"><div class="n">04</div><div class="t">绿标半年</div><p>自点亮起半年有效。到期未再及格则熄灭，重考后可再绿。</p></div>
+  </div>
+
+  <div class="eyebrow">成长方法节点 → 4期功能</div>
+  <table>
+    <thead>
+      <tr>
+        <th>圈上节点</th>
+        <th>功能设计</th>
+        <th>端</th>
+        <th>口径 / 来源</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>价值梳理</td>
+        <td>角色价值点库；根节点 / 颗粒度 / 体系化；评估与雷达的数据源。</td>
+        <td><span class="tag">运营</span><span class="tag">BP</span></td>
+        <td>Excel 开篇；成长方法外圈</td>
+      </tr>
+      <tr>
+        <td>点绿规则</td>
+        <td>后台配置及格分、所需及格次数、有效月数。默认 1 次 ≥ 80，有效 6 个月。</td>
+        <td><span class="tag">运营</span></td>
+        <td class="src">评审会 · 可配置</td>
+      </tr>
+      <tr>
+        <td>素材供给</td>
+        <td>按价值点聚合理论 / 体系 / 案例 / 认知。管理员发布，学员自由浏览。</td>
+        <td><span class="tag">运营</span><span class="tag">学员</span></td>
+        <td>成长方法外圈 + 纪要「提供素材」</td>
+      </tr>
+      <tr>
+        <td>浏览</td>
+        <td>按价值点自由看素材、评论、收藏。不制定学习计划。</td>
+        <td><span class="tag">学员</span></td>
+        <td class="src">评审会 · 自主</td>
+      </tr>
+      <tr>
+        <td>考试 · 题库供给</td>
+        <td>提报考题、考题审核；可 AI 据素材出题。</td>
+        <td><span class="tag">运营</span></td>
+        <td>成长方法考试树 + 纪要 AI 出题</td>
+      </tr>
+      <tr>
+        <td>考试 · 考试管理</td>
+        <td>按价值点交卷。达到配置及格次数后标绿，并写入半年有效期。</td>
+        <td><span class="tag">学员</span></td>
+        <td>Excel：完成 AI 考题成绩</td>
+      </tr>
+      <tr>
+        <td>绩效 S</td>
+        <td>名称不变。三条业务结果 + 三条挑战，无权重，线上提交。</td>
+        <td><span class="tag">学员</span><span class="tag">BP</span></td>
+        <td class="src">评审会</td>
+      </tr>
+      <tr>
+        <td>晋升路径</td>
+        <td>直角方块。只展示停留过的等级，跳级不留空位（4.1 直接到 5.1）。</td>
+        <td><span class="tag">学员</span></td>
+        <td class="src">评审会</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer>
+    v0.2 · 评审修订 · 4期专业成长 ·
+    <a href="./demo/index.html">功能 Demo</a> ·
+    <a href="../index.html">上层架构导航</a> ·
+    <a href="../_system/l3-business-capability-architecture/cognitive-platform-capability-framework.html">成长方法原图</a>
+    · 作者：@beynawoo-code
+  </footer>
+</body>
+</html>

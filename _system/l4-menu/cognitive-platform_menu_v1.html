@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>认知平台 · L4 菜单与角色矩阵</title>
+  <meta name="author" content="@beynawoo-code" />
+  <style>
+    :root {
+      --bg:#07090f; --card:#0e1422; --bd:rgba(255,255,255,.07); --txt:#dde6f5; --mut:#7a90b0; --dim:#4a5e78;
+      --font:Inter,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--txt);padding:36px 32px 72px;line-height:1.5;font-size:13px}
+    .badge{display:inline-flex;padding:5px 14px;border-radius:99px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.4);font-size:11px;font-weight:700;color:#4ade80;letter-spacing:.08em}
+    h1{font-size:28px;font-weight:900;margin:12px 0 8px}
+    .lead{color:var(--mut);max-width:900px;margin-bottom:20px}
+    h2{font-size:17px;font-weight:800;margin:28px 0 12px}
+    .legend{font-size:12px;color:var(--mut);margin-bottom:12px}
+    .mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:8px}
+    .mod{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px}
+    .mod .i{font-size:10px;font-weight:800;color:#60a5fa}
+    table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:8px}
+    th,td{padding:7px 8px;border-bottom:1px solid var(--bd);text-align:center;font-size:11.5px}
+    th{color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+    td:first-child,th:first-child,td:nth-child(2){text-align:left;color:var(--txt)}
+    td{color:var(--mut)}
+    .scroll{overflow-x:auto}
+    footer{margin-top:36px;font-size:12px;color:var(--mut)}
+  </style>
+</head>
+<body>
+  <span class="badge">L4 · MENU × ROLE</span>
+  <h1>认知平台 · 菜单与角色矩阵</h1>
+  <p class="lead">门户消费 IA + 后台 7 组 19 页。拟用角色 EMP / MENTOR / OPS / BP / LEARN / GROWTH / PTS / SYS。真实鉴权为 ERP 菜单码。⭐️ 主责 · ● 常用 · ○ 只读 · — 无。</p>
+
+  <h2>一级模块</h2>
+  <div class="mods">
+    <div class="mod"><div class="i">门户</div>首页四栏</div>
+    <div class="mod"><div class="i">门户</div>提报 / 考试 / 商城</div>
+    <div class="mod"><div class="i">门户</div>消息 / 我的</div>
+    <div class="mod"><div class="i">后台</div>运营 · 用户 · 成长</div>
+    <div class="mod"><div class="i">后台</div>素材 · 角色价值</div>
+    <div class="mod"><div class="i">后台</div>考试 · 积分</div>
+  </div>
+
+  <h2>后台 19 页 × 角色（摘要）</h2>
+  <p class="legend">EMP / MENTOR 默认无后台（同一账号可另授管理码）。完整 path 与 authPattern 见同目录 Markdown。</p>
+  <div class="scroll">
+    <table>
+      <tr>
+        <th>分组</th><th>菜单</th><th>OPS</th><th>BP</th><th>LEARN</th><th>GROWTH</th><th>PTS</th><th>SYS</th>
+      </tr>
+      <tr><td>运营</td><td>提报内容管理</td><td>⭐️</td><td>○</td><td>—</td><td>●</td><td>—</td><td>○</td></tr>
+      <tr><td>运营</td><td>发布内容管理</td><td>⭐️</td><td>—</td><td>—</td><td>—</td><td>—</td><td>○</td></tr>
+      <tr><td>运营</td><td>考试管理</td><td>○</td><td>—</td><td>⭐️</td><td>—</td><td>—</td><td>○</td></tr>
+      <tr><td>运营</td><td>课程管理</td><td>○</td><td>—</td><td>⭐️</td><td>—</td><td>—</td><td>○</td></tr>
+      <tr><td>运营</td><td>考试主题管理</td><td>○</td><td>—</td><td>⭐️</td><td>—</td><td>—</td><td>○</td></tr>
+      <tr><td>运营</td><td>试题管理</td><td>○</td><td>—</td><td>⭐️</td><td>—</td><td>—</td><td>○</td></tr>
+      <tr><td>运营</td><td>话题管理</td><td>⭐️</td><td>—</td><td>—</td><td>●</td><td>—</td><td>○</td></tr>
+      <tr><td>运营</td><td>BDA管理</td><td>⭐️</td><td>⭐️</td><td>—</td><td>—</td><td>—</td><td>○</td></tr>
+      <tr><td>运营</td><td>活动管理</td><td>⭐️</td><td>—</td><td>—</td><td>—</td><td>—</td><td>○</td></tr>
+      <tr><td>用户</td><td>用户管理</td><td>○</td><td>—</td><td>—</td><td>—</td><td>—</td><td>⭐️</td></tr>
+      <tr><td>用户</td><td>提报统计</td><td>●</td><td>○</td><td>○</td><td>●</td><td>—</td><td>⭐️</td></tr>
+      <tr><td>用户</td><td>目标管理</td><td>○</td><td>○</td><td>—</td><td>⭐️</td><td>—</td><td>●</td></tr>
+      <tr><td>成长</td><td>勋章管理</td><td>—</td><td>—</td><td>—</td><td>⭐️</td><td>—</td><td>○</td></tr>
+      <tr><td>素材</td><td>素材管理</td><td>●</td><td>—</td><td>—</td><td>⭐️</td><td>—</td><td>○</td></tr>
+      <tr><td>角色价值</td><td>价值点管理</td><td>○</td><td>—</td><td>—</td><td>⭐️</td><td>—</td><td>○</td></tr>
+      <tr><td>考试</td><td>AI试题生成</td><td>—</td><td>—</td><td>●</td><td>—</td><td>—</td><td>○</td></tr>
+      <tr><td>积分</td><td>商品管理</td><td>—</td><td>—</td><td>—</td><td>—</td><td>⭐️</td><td>○</td></tr>
+      <tr><td>积分</td><td>兑换订单</td><td>—</td><td>—</td><td>—</td><td>—</td><td>⭐️</td><td>○</td></tr>
+      <tr><td>积分</td><td>积分明细</td><td>○</td><td>●</td><td>—</td><td>●</td><td>⭐️</td><td>○</td></tr>
+    </table>
+  </div>
+
+  <h2>门户 × EMP / MENTOR</h2>
+  <table>
+    <tr><th>模块</th><th>EMP</th><th>MENTOR</th></tr>
+    <tr><td>首页四栏 + 详情 + 消息 + 我的</td><td>⭐️</td><td>⭐️</td></tr>
+    <tr><td>提报 BDA</td><td>⭐️</td><td>●</td></tr>
+    <tr><td>提报素材</td><td>—</td><td>⭐️</td></tr>
+    <tr><td>考试中心</td><td>⭐️</td><td>●</td></tr>
+    <tr><td>积分商城（需 minePoint）</td><td>●</td><td>●</td></tr>
+    <tr><td>奖金明细（需 mineBonus）</td><td>○</td><td>○</td></tr>
+  </table>
+  <footer>v1.0 · 2026-10-15 · 19 个后台侧栏页 · 作者：@beynawoo-code</footer>
+</body>
+</html>

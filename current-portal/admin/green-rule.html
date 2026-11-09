@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>点绿规则</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="admin" data-active="green-rule">
+<div id="chrome"></div>
+<main class="main">
+<p class="route">后台配置 · 面向全体员工</p>
+<h1>点绿规则</h1>
+<p class="lead">岗位价值点的考试点绿条件只在这里维护。保存后全体员工按同一套及格分、及格次数和有效月数计算，个人中心不能自行修改。</p>
+<div class="card">
+  <form id="green-rule-form" class="vp-green-rule">
+    <label>及格分 <input id="green-pass" type="number" min="0" max="100" step="1" required /></label>
+    <label>及格次数 <input id="green-count" type="number" min="1" max="9" step="1" required /></label>
+    <label>有效月数 <input id="green-months" type="number" min="1" max="24" step="1" required /></label>
+    <button type="submit" class="btn">保存全体规则</button>
+  </form>
+  <p class="lead" id="green-rule-now"></p>
+  <p class="lead" id="green-rule-saved" hidden>已保存。全体员工的价值点点绿状态按新规则重算。</p>
+</div>
+</main>
+<script src="../../vpslp-professional-growth/demo/demo-state.js"></script>
+<script>
+  function paintRule() {
+    var rule = VpslpDemo.loadGreenRule();
+    document.getElementById("green-pass").value = rule.passScore;
+    document.getElementById("green-count").value = rule.minPassCount;
+    document.getElementById("green-months").value = rule.validMonths;
+    document.getElementById("green-rule-now").textContent =
+      "当前全体规则：及格分 " + rule.passScore + "，及格 " + rule.minPassCount + " 次即绿，有效 " + rule.validMonths + " 个月。到期后须再考一次。";
+  }
+  document.getElementById("green-rule-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    VpslpDemo.saveGreenRule({
+      passScore: Number(document.getElementById("green-pass").value),
+      minPassCount: Number(document.getElementById("green-count").value),
+      validMonths: Number(document.getElementById("green-months").value),
+    });
+    var state = VpslpDemo.load();
+    VpslpDemo.refreshGreens(state);
+    VpslpDemo.save(state);
+    paintRule();
+    document.getElementById("green-rule-saved").hidden = false;
+  });
+  paintRule();
+</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

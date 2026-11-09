@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>素材详情</title>
+  <link rel="stylesheet" href="./portal-shell.css" />
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="../../current-portal/portal/me.html">认知平台 <span>素材</span></a>
+    <nav class="tabs"><a href="./learn.html">素材清单</a><a href="./me.html">个人中心</a><a href="./exam.html">考试</a></nav>
+  </header>
+  <div class="wrap">
+    <p class="meta mat-back"><a href="./learn.html">← 返回素材清单</a></p>
+    <div id="missing" class="card" style="display:none">
+      <h2>找不到这条素材</h2>
+      <p class="meta">链接有误，或这条素材不在清单里。</p>
+      <a class="btn" href="./learn.html">回到清单</a>
+    </div>
+    <div id="root" style="display:none">
+      <h1 class="h" id="title"></h1>
+      <p class="meta" id="sub"></p>
+      <div class="card mat-body">
+        <h2>正文</h2>
+        <p id="body"></p>
+      </div>
+      <div class="card">
+        <h2>互动</h2>
+        <div class="row" style="margin-bottom:10px">
+          <button class="chip" type="button" data-act="useful">有用</button>
+          <button class="chip" type="button" data-act="useless">无用</button>
+          <button class="chip" type="button" data-act="fav">收藏</button>
+          <span class="tag" id="views">浏览 0</span>
+          <span class="tag" id="cmt-count">评论 0</span>
+          <span class="tag" id="exam-flag">做题 未做</span>
+        </div>
+        <textarea id="cmt" rows="3" placeholder="写一条评论"></textarea>
+        <div class="actions"><button class="btn" type="button" id="send">发表评论</button></div>
+        <div id="cmts" class="mat-cmts"></div>
+      </div>
+      <p class="meta">
+        <a id="exam-link" href="./exam.html">进入考题</a>
+        · <a href="../../current-portal/portal/detail-professional.html">现网专业详情（示意）</a>
+      </p>
+    </div>
+  </div>
+  <script src="./demo-state.js"></script>
+  <script>
+    var D = VpslpDemo;
+    var state = D.load();
+    var params = new URLSearchParams(location.search);
+    var mid = params.get("m");
+    var mat = mid ? D.materialById(mid) : null;
+    var allowed = !!mat;
+
+    function render() {
+      if (!mat || !allowed) {
+        document.getElementById("missing").style.display = "block";
+        return;
+      }
+      document.getElementById("root").style.display = "block";
+      document.title = mat.title + " · 素材";
+      var it = D.touch(state, mat.id);
+      document.getElementById("title").textContent = mat.title;
+      document.getElementById("sub").textContent =
+        D.pointName(mat.pointId) + " · " + mat.kind + " · " + D.greenStatus(state, mat.pointId).label;
+      document.getElementById("exam-link").href = "./exam.html?p=" + encodeURIComponent(mat.pointId);
+      document.getElementById("body").textContent = mat.body || "（暂无正文，静态演示。）";
+      document.querySelector("[data-act=useful]").classList.toggle("on", !!it.useful);
+      document.querySelector("[data-act=useless]").classList.toggle("on", !!it.useless);
+      document.querySelector("[data-act=fav]").classList.toggle("on", !!it.fav);
+      document.getElementById("views").textContent = "浏览 " + (it.views || 0);
+      var met = D.materialMetrics(state, mat.id);
+      document.getElementById("cmt-count").textContent = "评论 " + met.commentCount;
+      var examEl = document.getElementById("exam-flag");
+      examEl.textContent = met.examDone ? "做题 已做" : "做题 未做";
+      examEl.className = met.examDone ? "tag ok" : "tag";
+      document.getElementById("cmts").innerHTML = (it.comments || []).map(function (c) {
+        return "<div class='round mat-cmt'>" + c + "</div>";
+      }).join("") || "<p class='meta'>还没有评论</p>";
+    }
+
+    if (mat && allowed) {
+      var it0 = D.touch(state, mat.id);
+      it0.views = (it0.views || 0) + 1;
+      D.markMaterialRead(state, mat.id);
+      D.save(state);
+    }
+    render();
+
+    document.querySelectorAll("[data-act]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        if (!mat || !allowed) return;
+        var it = D.touch(state, mat.id);
+        var key = el.getAttribute("data-act");
+        if (key === "useful") { it.useful = !it.useful; if (it.useful) it.useless = false; }
+        if (key === "useless") { it.useless = !it.useless; if (it.useless) it.useful = false; }
+        if (key === "fav") it.fav = !it.fav;
+        D.save(state);
+        render();
+      });
+    });
+    document.getElementById("send").addEventListener("click", function () {
+      if (!mat || !allowed) return;
+      var text = document.getElementById("cmt").value.trim();
+      if (!text) return;
+      var it = D.touch(state, mat.id);
+      it.comments.push(text);
+      document.getElementById("cmt").value = "";
+      D.save(state);
+      render();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+body[data-shell="admin"] { min-height: 100vh; }
+.side {
+  position: fixed; inset: 0 auto 0 0; width: 220px; overflow: auto;
+  background: #0f172a; color: #e2e8f0; padding: 16px 12px 32px;
+}
+.side .brand { color: #fff; display: flex; margin-bottom: 16px; }
+.side .brand small { color: #a5b4fc; }
+.side .g { font-size: 11px; color: #94a3b8; margin: 12px 8px 4px; }
+.side a { display: block; padding: 7px 8px; border-radius: 8px; color: #e2e8f0; font-size: 13px; }
+.side a.on, .side a:hover { background: #312e81; color: #fff; }
+body[data-shell="admin"] .main { margin-left: 220px; max-width: none; }
+@media (max-width: 800px) {
+  .side { position: relative; width: auto; }
+  body[data-shell="admin"] .main { margin-left: 0; }
+}

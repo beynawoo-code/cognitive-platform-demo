@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>首页</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="portal" data-active="home" data-tab="prof">
+<div id="chrome"></div>
+<main class="main">
+<div class="home">
+  <aside class="card rail prof-rail" data-panel="prof">
+    <p class="cbda-kicker">认知板块</p>
+    <nav class="cbda-nav" aria-label="内容板块">
+      <a href="home.html?tab=prof"><span class="cbda-ico">专</span>专业 <b class="prof-nav-count"></b></a>
+      <a href="home.html?tab=sperf"><span class="cbda-ico">绩</span>绩效 S</a>
+      <a href="home.html?tab=cbda"><span class="cbda-ico">案</span>CBDA案例</a>
+      <a href="home.html?tab=course"><span class="cbda-ico">课</span>课程</a>
+      <a href="home.html?tab=pub"><span class="cbda-ico">官</span>官方发布</a>
+    </nav>
+    <div class="cbda-split">
+      <p class="cbda-kicker">筛选</p>
+    </div>
+    <label>岗位</label>
+    <select data-key="pos"><option value="">全部</option></select>
+    <label>素材分类</label>
+    <select data-key="cat"><option value="">全部素材</option><option value="1">理论</option><option value="2">体系</option><option value="3">案例</option><option value="4">认知</option></select>
+    <label>价值点</label>
+    <select data-key="vp" class="prof-vp-select" hidden aria-hidden="true"><option value="">全部</option></select>
+    <div class="prof-vp-chips" data-key="vp" data-value="">
+      <button type="button" data-value="" class="on">全部</button>
+    </div>
+    <p class="prof-vp-more"><button type="button" class="linkish">展开全部 44 项</button></p>
+    <p class="cbda-kicker hot">热门内容</p>
+    <ol class="cbda-hot prof-hot-list"></ol>
+    <label class="prof-rail-order-label">排序</label>
+    <select data-key="order"><option value="score">综合</option><option value="time" selected>最新</option><option value="like">最有用</option><option value="comment">最多评论</option><option value="view">最多浏览</option></select>
+  </aside>
+  <aside class="card rail s-perf-rail" data-panel="sperf" hidden>
+    <p class="cbda-kicker">认知板块</p>
+    <nav class="cbda-nav" aria-label="内容板块">
+      <a href="home.html?tab=prof"><span class="cbda-ico">专</span>专业</a>
+      <a href="home.html?tab=sperf"><span class="cbda-ico">绩</span>绩效 S <b class="sperf-nav-count"></b></a>
+      <a href="home.html?tab=cbda"><span class="cbda-ico">案</span>CBDA案例</a>
+      <a href="home.html?tab=course"><span class="cbda-ico">课</span>课程</a>
+      <a href="home.html?tab=pub"><span class="cbda-ico">官</span>官方发布</a>
+    </nav>
+    <h2>筛选</h2>
+    <label>岗位</label>
+    <select data-key="pos"><option value="">全部</option><option>结构工程师</option><option>产品经理</option></select>
+    <label>状态</label>
+    <select data-key="status"><option value="">已上榜</option></select>
+    <label>排序</label>
+    <select data-key="order"><option value="period">周期最近</option><option value="like">最有用</option><option value="comment">最多评论</option><option value="view">最多浏览</option></select>
+    <p class="lead s-perf-rail-hint">信息流只公开已上榜的绩效 S，按预期业绩结果和挑战展示。</p>
+    <p class="lead"><a href="submit-s.html">去提报绩效 S</a></p>
+  </aside>
+  <aside class="card rail cbda-rail" data-panel="cbda" hidden>
+    <p class="cbda-kicker">认知板块</p>
+    <nav class="cbda-nav" aria-label="内容板块">
+      <a href="home.html?tab=prof"><span class="cbda-ico">专</span>专业</a>
+      <a href="home.html?tab=sperf"><span class="cbda-ico">绩</span>绩效 S</a>
+      <a href="home.html?tab=cbda"><span class="cbda-ico">案</span>CBDA案例 <b class="cbda-nav-count"></b></a>
+      <a href="home.html?tab=course"><span class="cbda-ico">课</span>课程</a>
+      <a href="home.html?tab=pub"><span class="cbda-ico">官</span>官方发布</a>
+    </nav>
+    <div class="cbda-split">
+      <p class="cbda-kicker">筛选</p>
+      <button type="button" class="cbda-reset" hidden>重置</button>
+    </div>
+    <label>岗位</label>
+    <select data-key="pos"><option value="">全部岗位</option><option>结构工程师</option><option>产品经理</option></select>
+    <label>BDA 维度</label>
+    <select data-key="bda"><option value="">全部维度</option><option value="D1">D1视线目标</option><option value="A5">A5承诺践行</option><option value="A4">A4持续评审</option><option value="A3">A3问题分析</option></select>
+    <p class="cbda-field">上榜</p>
+    <div class="cbda-chips" data-key="listed" data-value="">
+      <button type="button" data-value="" class="on">不限</button>
+      <button type="button" data-value="1">已上榜</button>
+      <button type="button" data-value="0">未上榜</button>
+    </div>
+    <p class="cbda-kicker hot">热门内容</p>
+    <ol class="cbda-hot">
+      <li><a href="home.html?tab=prof"><span class="hn">1</span><span>当我们在做VCC时，怎么拆目标</span></a></li>
+      <li><a href="home.html?tab=prof"><span class="hn">2</span><span>当我接了一个新项目时，该先问什么</span></a></li>
+      <li><a href="home.html?tab=prof"><span class="hn">3</span><span>当我们在做VCC时，怎么对齐客户</span></a></li>
+      <li><a href="home.html?tab=prof"><span class="hn">4</span><span>当我们在做VCC时，怎么复盘</span></a></li>
+      <li><a href="home.html?tab=prof"><span class="hn">5</span><span>当我们在做VCC时，怎么沉淀</span></a></li>
+      <li><a href="home.html?tab=prof"><span class="hn">6</span><span>硬件产品需求常用的分析方法</span></a></li>
+      <li><a href="home.html?tab=prof"><span class="hn">7</span><span>开柜产品Costdown的常见路径</span></a></li>
+      <li><a href="home.html?tab=prof"><span class="hn">8</span><span>作为一个DQE，怎么系统地看问题</span></a></li>
+    </ol>
+  </aside>
+  <aside class="card rail" data-panel="course" hidden>
+    <h2>筛选</h2>
+    <label>形式</label>
+    <select data-key="form"><option value="">全部</option><option value="video">视频</option><option value="text">文档</option><option value="rich">图文</option></select>
+    <label>学科</label>
+    <select data-key="subject"><option value="">全部</option><option value="1">通用力</option><option value="2">项目制</option><option value="3">新人培训</option><option value="4">领导力</option></select>
+  </aside>
+  <aside class="card rail" data-panel="pub" hidden>
+    <h2>筛选</h2>
+    <label>来源</label>
+    <select data-key="source"><option value="">全部</option><option>制度</option><option>通知</option><option>活动</option></select>
+    <label>排序</label>
+    <select data-key="order"><option value="score">综合</option><option value="time">最新</option></select>
+  </aside>
+
+  <section id="feed">
+    <div class="feed-block" data-panel="prof" aria-live="polite">
+      <div class="cbda-sort prof-only" data-panel="prof">
+        <div class="cbda-orders prof-orders" role="radiogroup" aria-label="排序方式">
+          <button type="button" data-order="score">综合</button>
+          <button type="button" data-order="time" class="on">最新</button>
+          <button type="button" data-order="like">最有用</button>
+          <button type="button" data-order="comment">最多评论</button>
+          <button type="button" data-order="view">最多浏览</button>
+        </div>
+      </div>
+      <div class="prof-feed-cards"></div>
+    </div>
+
+    <div class="feed-block" data-panel="sperf">
+    <div id="s-perf-feed" class="s-perf-feed-slot" aria-label="绩效 S 提报信息流"></div>
+    <p id="s-perf-empty" class="card s-perf-empty" hidden>没有已上榜的绩效 S。未上榜的提报不会出现在信息流。</p>
+    </div>
+
+    <div class="feed-block" data-panel="cbda">
+    <div class="cbda-sort cbda-only" data-panel="cbda" hidden>
+      <div class="cbda-orders" role="radiogroup" aria-label="排序方式">
+        <button type="button" data-order="score" class="on">综合</button>
+        <button type="button" data-order="time">最新</button>
+        <button type="button" data-order="like">最有用</button>
+        <button type="button" data-order="comment">最多评论</button>
+        <button type="button" data-order="view">最多浏览</button>
+      </div>
+      <p class="cbda-count">共 <b id="cbda-total">0</b> 条</p>
+    </div>
+    <a class="card pcard cbda-card tone-d1" data-panel="cbda" data-pos="产品经理" data-bda="D1" data-listed="1" data-score="96" data-time="3" data-like="15" data-comment="2" data-view="278" href="detail-cbda.html">
+      <span class="cbda-ribbon">荐</span>
+      <div class="author"><span class="avatar">吴</span><div><b>吴冰娜<span class="cbda-plate">精选案例T2025</span></b><span>产品中心</span></div></div>
+      <h3>过定位返工</h3>
+      <p class="excerpt">挑战：两个基准抢定位，批量返工。行为：改成一个主基准加辅助支撑。结果：不良下降，返工单减少。</p>
+      <div class="cbda-foot"><span class="bda-tag">D1视线目标</span><span>3 天前 · 278 浏览 · 15 人觉得有用</span></div>
+    </a>
+    <a class="card pcard cbda-card tone-a5" data-panel="cbda" data-pos="产品经理" data-bda="A5" data-listed="1" data-score="86" data-time="2" data-like="9" data-comment="1" data-view="204" href="detail-cbda.html">
+      <span class="cbda-ribbon">荐</span>
+      <div class="author"><span class="avatar">周</span><div><b>周某<span class="cbda-plate">年度标杆2025</span></b><span>产品中心</span></div></div>
+      <h3>季度复盘怎么写才有人看</h3>
+      <p class="excerpt">挑战：复盘写完没人读。行为：改成三条可执行决策。结果：下周会直接引用，不再重开话题。</p>
+      <div class="cbda-foot"><span class="bda-tag">A5承诺践行</span><span>2 天前 · 204 浏览 · 9 人觉得有用</span></div>
+    </a>
+    <a class="card pcard cbda-card tone-a3" data-panel="cbda" data-pos="结构工程师" data-bda="A3" data-listed="1" data-score="91" data-time="5" data-like="18" data-comment="4" data-view="320" href="detail-cbda.html">
+      <span class="cbda-ribbon">荐</span>
+      <div class="author"><span class="avatar">王</span><div><b>王雪微<span class="cbda-plate">精选案例T2025</span></b><span>ABU · 结构工程</span></div></div>
+      <h3>首款结构在试产里把偏差讲清楚</h3>
+      <p class="excerpt">试产流量偏差被当成合格，量产才暴露。先对齐中心值，再改关键因子，最后用样品回锁规格。</p>
+      <div class="cbda-foot"><span class="bda-tag">A3问题分析</span><span>5 天前 · 320 浏览 · 18 人觉得有用</span></div>
+    </a>
+    <a class="card pcard cbda-card tone-d1" data-panel="cbda" data-pos="结构工程师" data-bda="D1" data-listed="1" data-score="77" data-time="4" data-like="6" data-comment="2" data-view="159" href="detail-cbda.html">
+      <span class="cbda-ribbon">荐</span>
+      <div class="author"><span class="avatar">赵</span><div><b>赵工<span class="cbda-plate">结构月分享</span></b><span>结构工程</span></div></div>
+      <h3>间隙过大的客诉</h3>
+      <p class="excerpt">挑战：装配松动被客诉。行为：收紧配合并改检验口。结果：退货下降。</p>
+      <div class="cbda-foot"><span class="bda-tag">D1视线目标</span><span>今天 · 159 浏览 · 6 人觉得有用</span></div>
+    </a>
+    <a class="card pcard cbda-card tone-a4" data-panel="cbda" data-pos="结构工程师" data-bda="A4" data-listed="0" data-score="70" data-time="1" data-like="4" data-comment="0" data-view="60" href="detail-cbda.html">
+      <div class="author"><span class="avatar">林</span><div><b>林某</b><span>硬件工程</span></div></div>
+      <h3>换料缩水</h3>
+      <p class="excerpt">挑战：外观缩水。行为：换料并改模温。结果：客诉减少，尚未上榜。</p>
+      <div class="cbda-foot"><span class="bda-tag">A4持续评审</span><span>1 周前 · 60 浏览 · 4 人觉得有用</span></div>
+    </a>
+    </div>
+
+    <div class="grid" data-panel="course">
+      <a class="card pcard" data-panel="course" data-form="video" data-subject="1" href="detail-course.html"><div class="cover a">视频</div><h3>公差带入门</h3><p class="lead">通用力 · 陈工 · 浏览 420 · 有用 30</p></a>
+      <a class="card pcard" data-panel="course" data-form="text" data-subject="3" href="detail-course.html"><div class="cover b">文档</div><h3>装配标准</h3><p class="lead">新人培训 · 刘工 · 浏览 210 · 有用 12</p></a>
+      <a class="card pcard" data-panel="course" data-form="rich" data-subject="2" href="detail-course.html"><div class="cover c">图文</div><h3>项目复盘课</h3><p class="lead">项目制 · 吴冰娜 · 浏览 160 · 有用 8</p></a>
+      <a class="card pcard" data-panel="course" data-form="video" data-subject="4" href="detail-course.html"><div class="cover d">视频</div><h3>带团队的第一次评审</h3><p class="lead">领导力 · 周某 · 浏览 98 · 有用 5</p></a>
+    </div>
+    <div class="grid" data-panel="pub">
+      <a class="card pcard" data-panel="pub" data-source="制度" data-score="90" data-time="3" href="detail-publish.html"><span class="badge-pin">置顶</span><div class="cover a">制度</div><h3>本季学习安排</h3><p class="lead">3 天前 · 浏览 800 · 有用 40</p></a>
+      <a class="card pcard" data-panel="pub" data-source="通知" data-score="60" data-time="1" href="detail-publish.html"><div class="cover b">通知</div><h3>考勤与培训通知</h3><p class="lead">1 周前 · 浏览 220 · 有用 6</p></a>
+      <a class="card pcard" data-panel="pub" data-source="制度" data-score="84" data-time="2" href="detail-publish.html"><div class="cover c">制度</div><h3>积分发放规则</h3><p class="lead">5 天前 · 浏览 510 · 有用 21</p></a>
+      <a class="card pcard" data-panel="pub" data-source="活动" data-score="72" data-time="4" href="detail-publish.html"><div class="cover d">活动</div><h3>结构月分享会</h3><p class="lead">今天 · 浏览 130 · 有用 9</p></a>
+    </div>
+  </section>
+
+  <aside class="card rank" data-panel="sperf" hidden><h2>已上榜</h2><ol><li>吴冰娜 · 2025 下半年</li><li>吴冰娜 · 2025 上半年</li></ol><p class="lead"><a href="me.html">我的提报</a></p></aside>
+  <aside class="rank cbda-side prof-side" data-panel="prof">
+    <div class="cbda-banner">
+      <span class="cbda-crown" aria-hidden="true">♛</span>
+      <b>本期影响力榜单</b>
+      <a class="cbda-banner-link" href="home.html?tab=prof">详情</a>
+      <span class="cbda-period-pill">周榜</span>
+    </div>
+    <div class="cbda-period prof-period" role="radiogroup" aria-label="榜单周期">
+      <button type="button" data-period="周" class="on">周</button>
+      <button type="button" data-period="月">月</button>
+      <button type="button" data-period="季">季</button>
+      <button type="button" data-period="年">年</button>
+    </div>
+    <section class="card cbda-rank-card prof-rank-authors">
+      <h2>活跃作者</h2>
+      <ol></ol>
+    </section>
+    <section class="card cbda-rank-card prof-rank-learners">
+      <h2>活跃学员</h2>
+      <ol></ol>
+    </section>
+  </aside>
+  <aside class="rank cbda-side" data-panel="cbda" hidden>
+    <div class="cbda-banner">
+      <span class="cbda-crown" aria-hidden="true">♛</span>
+      <b>本期影响力榜单</b>
+      <span class="cbda-period-pill">周榜</span>
+    </div>
+    <div class="cbda-period" role="radiogroup" aria-label="榜单周期">
+      <button type="button" data-period="周" class="on">周</button>
+      <button type="button" data-period="月">月</button>
+      <button type="button" data-period="季">季</button>
+      <button type="button" data-period="年">年</button>
+    </div>
+    <section class="card cbda-rank-card">
+      <h2>活跃作者</h2>
+      <ol>
+        <li class="top"><span class="n n1">1</span><span class="avatar">赵</span><div><b>赵琪芒</b><span>ABU用户中心</span></div><em>2<small>提报</small></em></li>
+        <li><span class="n n2">2</span><span class="avatar">黄</span><div><b>黄伟峰</b><span>ABU用户中心</span></div><em>1<small>提报</small></em></li>
+        <li><span class="n n3">3</span><span class="avatar">沈</span><div><b>沈洪波</b><span>ABU用户中心</span></div><em>1<small>提报</small></em></li>
+        <li><span class="n">4</span><span class="avatar">周</span><div><b>周宇轩</b><span>ABU交付中心</span></div><em>1<small>提报</small></em></li>
+        <li><span class="n">5</span><span class="avatar">胡</span><div><b>胡典雅</b><span>ABU交付中心</span></div><em>1<small>提报</small></em></li>
+        <li><span class="n">6</span><span class="avatar">万</span><div><b>万勇</b><span>ABU结构事业</span></div><em>1<small>提报</small></em></li>
+      </ol>
+    </section>
+    <section class="card cbda-rank-card">
+      <h2>活跃学员</h2>
+      <ol>
+        <li class="top"><span class="n n1">1</span><span class="avatar">张</span><div><b>张春秀</b><span>ABU结构事业</span></div><em>132<small>浏览</small></em></li>
+        <li><span class="n n2">2</span><span class="avatar">林</span><div><b>林敏</b><span>ABU结构事业</span></div><em>30<small>浏览</small></em></li>
+        <li><span class="n n3">3</span><span class="avatar">庞</span><div><b>庞斌</b><span>ABU交付中心</span></div><em>28<small>浏览</small></em></li>
+        <li><span class="n">4</span><span class="avatar">侯</span><div><b>侯雪容</b><span>ABU用户中心</span></div><em>22<small>浏览</small></em></li>
+        <li><span class="n">5</span><span class="avatar">钟</span><div><b>钟宏涛</b><span>ABU交付中心</span></div><em>20<small>浏览</small></em></li>
+        <li><span class="n">6</span><span class="avatar">谭</span><div><b>谭雄</b><span>ABU结构事业</span></div><em>18<small>浏览</small></em></li>
+      </ol>
+    </section>
+  </aside>
+  <aside class="card rank" data-panel="course" hidden><h2>课程热榜</h2><ol><li>公差带入门</li><li>装配标准</li><li>项目复盘课</li><li>带团队的第一次评审</li></ol></aside>
+  <aside class="card rank" data-panel="pub" hidden><h2>官方热榜</h2><ol><li>本季学习安排</li><li>积分发放规则</li><li>结构月分享会</li><li>考勤与培训通知</li></ol></aside>
+</div>
+<script src="prof-feed-mock.js"></script>
+<script src="prof-feed.js"></script>
+<script>
+  if (window.ProfFeed) ProfFeed.mount();
+  var tab = new URLSearchParams(location.search).get("tab") || "prof";
+  document.body.dataset.tab = tab;
+  var feed = document.getElementById("feed");
+  var cbdaOrder = "score";
+  var profOrder = "time";
+
+  function rail() {
+    return document.querySelector('.rail[data-panel="' + tab + '"]');
+  }
+  function showPanels() {
+    document.querySelectorAll("[data-panel]").forEach(function (el) {
+      if (el.classList.contains("cbda-only")) {
+        el.hidden = tab !== "cbda";
+        return;
+      }
+      if (el.classList.contains("prof-only")) {
+        el.hidden = tab !== "prof";
+        return;
+      }
+      if (el.classList.contains("feed-block") && el.parentElement === feed) {
+        el.hidden = el.getAttribute("data-panel") !== tab;
+        return;
+      }
+      if (el.closest && el.parentElement === feed && el.classList.contains("grid")) {
+        el.hidden = el.getAttribute("data-panel") !== tab;
+        return;
+      }
+      if (el.classList.contains("rail") || el.classList.contains("rank") || el.classList.contains("cbda-side")) {
+        var panelId = el.getAttribute("data-panel");
+        if (panelId) el.hidden = panelId !== tab;
+      }
+    });
+  }
+  function val(key) {
+    var box = rail();
+    if (!box) return "";
+    var node = box.querySelector('[data-key="' + key + '"]');
+    if (!node) return "";
+    if (node.tagName === "SELECT") return node.value;
+    return node.getAttribute("data-value") || "";
+  }
+  function syncSectionNav() {
+    document.querySelectorAll(".cbda-nav a").forEach(function (a) {
+      var href = a.getAttribute("href") || "";
+      a.classList.toggle("on", href.indexOf("tab=" + tab) >= 0);
+    });
+  }
+  function apply() {
+    showPanels();
+    syncSectionNav();
+    var order = tab === "cbda" ? cbdaOrder : tab === "prof" ? profOrder : (val("order") || (tab === "sperf" ? "period" : "score"));
+    feed.querySelectorAll(".pcard").forEach(function (card) {
+      var panel = card.getAttribute("data-panel");
+      if (panel !== tab) { card.hidden = true; return; }
+      var ok = true;
+      if (tab === "prof") {
+        if (val("cat") && card.getAttribute("data-cat") !== val("cat")) ok = false;
+        if (val("pos") && card.getAttribute("data-pos") !== val("pos")) ok = false;
+        if (val("vp") && card.getAttribute("data-vp") !== val("vp")) ok = false;
+      } else if (tab === "cbda") {
+        if (val("pos") && card.getAttribute("data-pos") !== val("pos")) ok = false;
+        if (val("bda") && card.getAttribute("data-bda") !== val("bda")) ok = false;
+        if (val("listed") && card.getAttribute("data-listed") !== val("listed")) ok = false;
+      } else if (tab === "course") {
+        if (val("form") && card.getAttribute("data-form") !== val("form")) ok = false;
+        if (val("subject") && card.getAttribute("data-subject") !== val("subject")) ok = false;
+      } else if (tab === "pub") {
+        if (val("source") && card.getAttribute("data-source") !== val("source")) ok = false;
+      } else if (tab === "sperf") {
+        if (val("pos") && card.getAttribute("data-pos") !== val("pos")) ok = false;
+        if (val("status") && card.getAttribute("data-status") !== val("status")) ok = false;
+      }
+      card.hidden = !ok;
+    });
+    if (tab === "sperf") {
+      var sn = 0;
+      feed.querySelectorAll('.pcard[data-panel="sperf"]').forEach(function (card) { if (!card.hidden) sn += 1; });
+      document.querySelectorAll(".sperf-nav-count").forEach(function (el) { el.textContent = sn ? String(sn) : ""; });
+      var emptyEl = document.getElementById("s-perf-empty");
+      if (emptyEl) emptyEl.hidden = sn > 0;
+    }
+    if (tab === "cbda") {
+      var n = 0;
+      feed.querySelectorAll('.pcard[data-panel="cbda"]').forEach(function (card) { if (!card.hidden) n += 1; });
+      var total = document.getElementById("cbda-total");
+      var navCount = document.querySelector(".cbda-nav-count");
+      if (total) total.textContent = String(n);
+      if (navCount) navCount.textContent = String(n);
+      var reset = document.querySelector(".cbda-reset");
+      if (reset) reset.hidden = !(val("pos") || val("bda") || val("listed"));
+    }
+    var cards = Array.prototype.slice.call(feed.querySelectorAll('.pcard[data-panel="' + tab + '"]'));
+    cards.sort(function (a, b) {
+      if (tab === "sperf") {
+        var sortKey = order === "period" ? "period-rank" : order;
+        return Number(b.getAttribute("data-" + sortKey) || 0) - Number(a.getAttribute("data-" + sortKey) || 0);
+      }
+      return Number(b.getAttribute("data-" + order) || 0) - Number(a.getAttribute("data-" + order) || 0);
+    });
+    cards.forEach(function (card) {
+      var mount = tab === "sperf"
+        ? document.getElementById("s-perf-feed")
+        : tab === "prof"
+          ? feed.querySelector(".prof-feed-cards")
+          : (feed.querySelector('.feed-block[data-panel="' + tab + '"]') || feed.querySelector('.grid[data-panel="' + tab + '"]'));
+      (mount || feed).appendChild(card);
+    });
+  }
+  document.querySelectorAll(".rail select").forEach(function (sel) {
+    sel.addEventListener("change", apply);
+  });
+  var cbdaChips = document.querySelector(".cbda-chips");
+  if (cbdaChips) {
+    cbdaChips.addEventListener("click", function (e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      cbdaChips.setAttribute("data-value", btn.getAttribute("data-value") || "");
+      cbdaChips.querySelectorAll("button").forEach(function (item) {
+        item.classList.toggle("on", item === btn);
+      });
+      apply();
+    });
+  }
+  var cbdaReset = document.querySelector(".cbda-reset");
+  if (cbdaReset) {
+    cbdaReset.addEventListener("click", function () {
+      var box = document.querySelector('.rail[data-panel="cbda"]');
+      box.querySelectorAll("select").forEach(function (sel) { sel.value = ""; });
+      cbdaChips.setAttribute("data-value", "");
+      cbdaChips.querySelectorAll("button").forEach(function (item) {
+        item.classList.toggle("on", (item.getAttribute("data-value") || "") === "");
+      });
+      apply();
+    });
+  }
+  var profVpChips = document.querySelector(".prof-vp-chips");
+  if (profVpChips) {
+    profVpChips.addEventListener("click", function (e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      var v = btn.getAttribute("data-value") || "";
+      profVpChips.setAttribute("data-value", v);
+      profVpChips.querySelectorAll("button").forEach(function (item) {
+        item.classList.toggle("on", item === btn);
+      });
+      var vpSel = document.querySelector("select.prof-vp-select");
+      if (vpSel) vpSel.value = v;
+      apply();
+    });
+  }
+  var profOrders = document.querySelector(".prof-orders");
+  if (profOrders) {
+    profOrders.addEventListener("click", function (e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      profOrder = btn.getAttribute("data-order") || "time";
+      profOrders.querySelectorAll("button").forEach(function (item) {
+        item.classList.toggle("on", item === btn);
+      });
+      var orderSel = document.querySelector('.rail[data-panel="prof"] select[data-key="order"]');
+      if (orderSel) orderSel.value = profOrder;
+      apply();
+    });
+  }
+  var profPeriod = document.querySelector(".prof-period");
+  if (profPeriod) {
+    profPeriod.addEventListener("click", function (e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      profPeriod.querySelectorAll("button").forEach(function (item) {
+        item.classList.toggle("on", item === btn);
+      });
+      var pill = document.querySelector(".prof-side .cbda-period-pill");
+      if (pill) pill.textContent = btn.getAttribute("data-period") + "榜";
+    });
+  }
+  var cbdaOrders = document.querySelector(".cbda-orders");
+  if (cbdaOrders) {
+    cbdaOrders.addEventListener("click", function (e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      cbdaOrder = btn.getAttribute("data-order") || "score";
+      cbdaOrders.querySelectorAll("button").forEach(function (item) {
+        item.classList.toggle("on", item === btn);
+      });
+      apply();
+    });
+  }
+  var cbdaPeriod = document.querySelector(".cbda-period");
+  if (cbdaPeriod) {
+    cbdaPeriod.addEventListener("click", function (e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      cbdaPeriod.querySelectorAll("button").forEach(function (item) {
+        item.classList.toggle("on", item === btn);
+      });
+      var pill = document.querySelector(".cbda-period-pill");
+      if (pill) pill.textContent = btn.getAttribute("data-period") + "榜";
+    });
+  }
+  feed.addEventListener("click", function (e) {
+    var expand = e.target.closest(".expand");
+    if (expand) {
+      e.preventDefault();
+      var card = expand.closest(".pcard");
+      var opening = !card.classList.contains("open");
+      card.classList.toggle("open");
+      expand.setAttribute("aria-expanded", opening ? "true" : "false");
+      var label = expand.querySelector(".prof-expand-label");
+      if (label) label.textContent = opening ? "收起" : "展开全文";
+      else expand.textContent = opening ? "收起" : "展开全文";
+      var dots = expand.querySelector(".prof-expand-dots");
+      if (dots) dots.hidden = opening;
+      return;
+    }
+  });
+  apply();
+  window.homeFeedApply = apply;
+</script>
+<script src="feed-interaction.js"></script>
+<script>
+  if (window.FeedInteraction) {
+    FeedInteraction.mount(feed, {
+      storageKey: "cognition-prof-feed-eng-v2",
+      upgradeLegacy: true,
+      cardSelector: '.pcard[data-panel="prof"].feed-interact-card',
+      getCommentAuthor: function () { return "吴冰娜"; },
+    });
+  }
+</script>
+<script src="s-perf.js"></script>
+<script>
+  SPerf.mountFeed(document.getElementById("s-perf-feed"));
+  if (window.homeFeedApply) window.homeFeedApply();
+</script>
+</main>
+<script src="../chrome.js"></script>
+</body>
+</html>

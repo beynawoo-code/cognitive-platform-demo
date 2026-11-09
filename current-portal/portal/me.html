@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>个人中心</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="portal" data-active="me">
+<div id="chrome"></div>
+<main class="main me-main">
+<div class="me-body-layout">
+<nav class="me-anchor-nav card" aria-label="页内快速定位">
+  <p class="me-anchor-nav-label">快速定位</p>
+  <a href="#me-hero">概览</a>
+  <a href="#value-points">价值点</a>
+  <a href="#s-me">绩效 S</a>
+  <a href="#perf-results">绩效结果</a>
+  <a href="#goal-card">内容与目标</a>
+  <a href="#me-interactions">最近互动</a>
+</nav>
+
+<div class="me-body-main">
+<div class="me-hero-row" id="me-hero">
+  <div class="card me-card me-card-profile">
+    <div class="banner me-profile-banner"></div>
+    <div class="me-user">
+      <div class="avatar">吴</div>
+      <b>吴冰娜</b>
+      <p class="me-user-meta">（DP）数字平台 · 产品 · 软件产品组长</p>
+    </div>
+    <div class="me-stats-compact" aria-label="概要统计">
+      <div class="me-stat"><span>累计奖金</span><b>¥0</b></div>
+      <div class="me-stat"><span>提报数</span><b>8</b></div>
+      <div class="me-stat"><span>勋章数</span><b id="me-stat-medals">0</b></div>
+      <div class="me-stat"><span>互动数</span><b>235</b></div>
+    </div>
+  </div>
+  <div class="card me-card me-card-growth">
+    <h3 class="me-growth-title">成长路径</h3>
+    <div class="lv-path me-lv-path" id="me-lv-path" aria-label="晋升路径，仅展示停留过的层级，当前 LV5.1">
+      <span class="lv-node done">LV3.2</span>
+      <span class="lv-link done"></span>
+      <span class="lv-node done">LV4.1</span>
+      <span class="lv-link done"></span>
+      <span class="lv-node now">LV5.1<small>当前</small></span>
+    </div>
+    <div class="me-perf-pair">
+      <div class="me-perf-box me-perf-now">
+        <span class="me-perf-label">当前绩效</span>
+        <b id="me-current-perf">—</b>
+        <p class="lead" id="me-current-perf-note"></p>
+      </div>
+      <div class="me-perf-box me-perf-next">
+        <span class="me-perf-label">预计进入</span>
+        <b id="me-next-perf">—</b>
+        <p class="lead" id="me-next-perf-note"></p>
+      </div>
+    </div>
+  </div>
+  <div class="card me-card me-card-medals">
+    <h3 class="me-medals-title">勋章墙</h3>
+    <p class="me-medals-hint" id="me-medals-hint">已获得 · 含铭牌与勋章（模拟）</p>
+    <div id="me-lit-medals" class="me-lit-medals" aria-label="已获得勋章与铭牌"></div>
+    <p class="lead me-medals-more"><a href="medals.html">查看全部</a></p>
+  </div>
+</div>
+
+<div class="me-work-stack" id="me-work-stack">
+  <div class="card" id="value-points">
+    <div class="assess-entry-head">
+      <div>
+        <h2>岗位价值点</h2>
+        <p class="lead" id="vp-green-note">按该价值点涉及的全部素材出题考试。点绿条件由后台统一配置，到期须再考一次才能保持绿色。</p>
+      </div>
+      <div class="goal-seg" id="vp-cycle" role="radiogroup" aria-label="价值点周期"></div>
+    </div>
+    <div id="vp-green-board" class="vp-green-board" aria-label="价值点点绿状态"></div>
+    <div id="vp-cycle-detail" class="vp-cycle-detail" hidden></div>
+  </div>
+</div>
+
+<div id="s-me"></div>
+<div class="me-split me-split--single" aria-label="绩效结果"><div id="quarterly-me"></div></div>
+
+<div class="me-split me-split--single">
+  <div class="card" id="goal-card">
+    <div class="goal-head">
+      <div>
+        <h2>内容与目标</h2>
+        <p class="lead" id="goal-pos">结构工程师</p>
+      </div>
+      <div class="goal-seg" role="radiogroup" aria-label="目标周期">
+        <button type="button" data-period="1" class="on">全年</button>
+        <button type="button" data-period="2">上半年</button>
+        <button type="button" data-period="3">下半年</button>
+      </div>
+    </div>
+    <div class="goal-vps" id="goal-vps"></div>
+    <div class="goal-set" id="goal-set"></div>
+    <div class="goal-rows" id="goal-rows"></div>
+    <div class="goal-money" id="goal-money"></div>
+    <p class="goal-formula" id="goal-formula"></p>
+    <div class="goal-foot">
+      <span>已提报 <b id="goal-pub">0</b> 篇</span>
+      <a href="submit-material.html">我的素材</a>
+    </div>
+  </div>
+</div>
+<div class="card me-interactions-card" id="me-interactions">
+  <div class="me-interactions-head">
+    <div class="me-interactions-title">
+      <span class="me-interactions-icon" aria-hidden="true"></span>
+      <h2>最近互动</h2>
+    </div>
+    <a class="me-interactions-more" href="interactions.html">查看全部 &gt;</a>
+  </div>
+  <ul class="me-interactions-list" aria-label="最近互动列表">
+    <li class="me-interactions-item">
+      <span class="me-interactions-cat">理论</span>
+      <div class="me-interactions-body">
+        <a href="detail-publish.html">做好年度项目规划要先成为业务价值型产品经理</a>
+        <p class="me-interactions-time">3 小时前</p>
+      </div>
+      <span class="me-interactions-status"><i aria-hidden="true"></i>已发布</span>
+    </li>
+    <li class="me-interactions-item">
+      <span class="me-interactions-cat">案例</span>
+      <div class="me-interactions-body">
+        <a href="detail-cbda.html">CBDA：从个人中心进入评估的返回链路对齐</a>
+        <p class="me-interactions-time">1 天前</p>
+      </div>
+      <span class="me-interactions-status"><i aria-hidden="true"></i>已发布</span>
+    </li>
+    <li class="me-interactions-item">
+      <span class="me-interactions-cat">体系</span>
+      <div class="me-interactions-body">
+        <a href="detail-professional.html">价值点考试点绿与有效期说明</a>
+        <p class="me-interactions-time">3 天前</p>
+      </div>
+      <span class="me-interactions-status"><i aria-hidden="true"></i>已发布</span>
+    </li>
+  </ul>
+</div>
+</div>
+</div>
+<script src="../medals-mock.js"></script>
+<script src="../../vpslp-professional-growth/demo/demo-state.js"></script>
+<script src="quarterly-perf-mock.js"></script>
+<script src="quarterly-perf.js"></script>
+<script src="s-perf.js"></script>
+<script>
+  var vpCycle = "2026|h2";
+  var vpOpen = "";
+  function renderValuePoints() {
+    var board = document.getElementById("vp-green-board");
+    var cycleBar = document.getElementById("vp-cycle");
+    var detail = document.getElementById("vp-cycle-detail");
+    if (!board) return;
+    if (!window.VpslpDemo) {
+      board.innerHTML = '<p class="lead">价值点脚本未加载。</p>';
+      return;
+    }
+    var state = VpslpDemo.load();
+    VpslpDemo.refreshGreens(state);
+    VpslpDemo.save(state);
+    var rule = VpslpDemo.ruleOf(state);
+    var note = document.getElementById("vp-green-note");
+    if (note) {
+      note.textContent = "角色「" + VpslpDemo.ROLE + "」的岗位价值点。每个周期单独记录阅读材料、考试分数和是否点亮。点亮规则：及格分 " + rule.passScore + "、及格 " + rule.minPassCount + " 次。";
+    }
+    if (cycleBar) {
+      cycleBar.innerHTML = VpslpDemo.cyclePeriods().map(function (key) {
+        return '<button type="button" data-cycle="' + key + '"' + (key === vpCycle ? ' class="on"' : "") + ">" + VpslpDemo.cycleLabel(key) + "</button>";
+      }).join("");
+    }
+    board.innerHTML = VpslpDemo.POINTS.map(function (p) {
+      var row = VpslpDemo.cyclePoint(state, vpCycle, p.id);
+      var score = row.latest ? row.latest.score + " 分" : "未考";
+      var read = row.materials.length ? "已读 " + row.readCount + "/" + row.materials.length : "无素材";
+      var lit = row.lit ? "已点亮" : "未点亮";
+      return '<button type="button" class="vp-green-chip' + (row.lit ? " on" : "") + (vpOpen === p.id ? " is-open" : "") + '" data-point="' + p.id + '"><b>' + p.name + "</b><span>" + read + " · " + score + " · " + lit + "</span></button>";
+    }).join("");
+    if (!detail) return;
+    if (!vpOpen) {
+      detail.hidden = true;
+      detail.innerHTML = "";
+      return;
+    }
+    var point = VpslpDemo.POINTS.filter(function (item) { return item.id === vpOpen; })[0];
+    var row = VpslpDemo.cyclePoint(state, vpCycle, vpOpen);
+    var mats = row.materials.length
+      ? row.materials.map(function (item) {
+          var done = row.readIds.indexOf(item.id) >= 0;
+          return "<li><b>" + item.title + "</b><span>" + (done ? "已读" : "未读") + "</span></li>";
+        }).join("")
+      : "<li><b>该价值点暂无阅读材料</b><span>未读</span></li>";
+    var exams = row.exams.length
+      ? row.exams.map(function (item) { return item.score + " 分"; }).join("、")
+      : "未考";
+    detail.hidden = false;
+    detail.innerHTML =
+      "<h3>" + (point ? point.name : "") + " · " + VpslpDemo.cycleLabel(vpCycle) + "</h3>" +
+      "<p>阅读材料</p><ul class=\"vp-cycle-mats\">" + mats + "</ul>" +
+      "<p>考试分数：" + exams + "</p>" +
+      "<p>是否点亮：" + (row.lit ? "已点亮" : "未点亮") + "</p>" +
+      '<p class="lead"><a href="../../vpslp-professional-growth/demo/exam.html?p=' + encodeURIComponent(vpOpen) + '">去考试</a></p>';
+  }
+</script>
+<script>
+  (function () {
+    var snap = SPerf.profileSnapshot();
+    if (SPerf.fillGrowthLvPath) {
+      SPerf.fillGrowthLvPath(document.getElementById("me-lv-path"), snap);
+    }
+    document.getElementById("me-current-perf").textContent = snap.currentTitle;
+    document.getElementById("me-current-perf-note").textContent = snap.currentNote;
+    document.getElementById("me-next-perf").textContent = snap.nextTitle;
+    document.getElementById("me-next-perf-note").textContent = snap.nextNote;
+    renderValuePoints();
+    var vpRoot = document.getElementById("value-points");
+    if (vpRoot) {
+      vpRoot.addEventListener("click", function (e) {
+        var cycleBtn = e.target.closest("[data-cycle]");
+        if (cycleBtn) {
+          vpCycle = cycleBtn.getAttribute("data-cycle");
+          vpOpen = "";
+          renderValuePoints();
+          return;
+        }
+        var pointBtn = e.target.closest("[data-point]");
+        if (!pointBtn) return;
+        var id = pointBtn.getAttribute("data-point");
+        vpOpen = vpOpen === id ? "" : id;
+        renderValuePoints();
+      });
+    }
+    if (window.CognitionMedals) {
+      var medalState = CognitionMedals.loadUser();
+      var earnedN = CognitionMedals.earnedCount(medalState);
+      var medalsEl = document.getElementById("me-lit-medals");
+      if (medalsEl) medalsEl.innerHTML = CognitionMedals.meCardMarkup(medalState);
+      var medalStat = document.getElementById("me-stat-medals");
+      if (medalStat) medalStat.textContent = String(earnedN);
+      var hint = document.getElementById("me-medals-hint");
+      if (hint) {
+        hint.textContent = "已获得 " + earnedN + " / " + CognitionMedals.CATALOG.length + " · 含铭牌与勋章（模拟）";
+      }
+    }
+  })();
+  if (window.QuarterlyPerf) QuarterlyPerf.mountMeBlock(document.getElementById("quarterly-me"));
+  SPerf.mountMe(document.getElementById("s-me"));
+  var period = "1";
+  var vp = "asm";
+  var data = {
+    "asm|1": { pos: "结构工程师", setDone: 1, setTarget: 2, setAmount: 200, due: 360, paid: 120, remain: 240, pub: 8, items: [["理论", 2, 3, 80], ["体系", 1, 2, 40], ["案例", 1, 2, 40], ["认知", 0, 1, 0]] },
+    "asm|2": { pos: "结构工程师", setDone: 1, setTarget: 1, setAmount: 100, due: 180, paid: 180, remain: 0, pub: 4, items: [["理论", 1, 1, 40], ["体系", 1, 1, 40], ["案例", 0, 1, 0], ["认知", 0, 1, 0]] },
+    "asm|3": { pos: "结构工程师", setDone: 0, setTarget: 1, setAmount: 100, due: 60, paid: 0, remain: 60, pub: 4, items: [["理论", 1, 2, 20], ["体系", 0, 1, 0], ["案例", 1, 1, 40], ["认知", 0, 1, 0]] },
+    "tol|1": { pos: "结构工程师", setDone: 0, setTarget: 0, setAmount: 0, due: 180, paid: 50, remain: 130, pub: 5, items: [["理论", 1, 2, 30], ["体系", 0, 1, 0], ["案例", 2, 2, 100], ["认知", 1, 1, 50]] },
+    "tol|2": { pos: "结构工程师", setDone: 0, setTarget: 1, setAmount: 80, due: 50, paid: 0, remain: 50, pub: 2, items: [["理论", 0, 1, 0], ["体系", 0, 1, 0], ["案例", 1, 1, 50], ["认知", 0, 1, 0]] },
+    "tol|3": { pos: "结构工程师", setDone: 1, setTarget: 1, setAmount: 80, due: 230, paid: 80, remain: 150, pub: 3, items: [["理论", 1, 1, 30], ["体系", 1, 1, 20], ["案例", 1, 1, 50], ["认知", 1, 1, 50]] }
+  };
+  var vps = [{ id: "asm", name: "装配工艺" }, { id: "tol", name: "公差配合" }];
+
+  function yuan(n) { return "¥" + n; }
+  function render() {
+    var row = data[vp + "|" + period];
+    document.getElementById("goal-pos").textContent = row.pos;
+    document.getElementById("goal-vps").innerHTML = vps.map(function (item) {
+      return '<button type="button" data-vp="' + item.id + '"' + (item.id === vp ? ' class="on"' : "") + ">" + item.name + "</button>";
+    }).join("");
+    var set = document.getElementById("goal-set");
+    if (row.setTarget > 0) {
+      var done = row.setDone >= row.setTarget;
+      set.innerHTML = "<span>全套 <b>" + row.setDone + "</b>/" + row.setTarget + " 套</span><span class=\"goal-badge" + (done ? " ok" : "") + "\">" + (done ? "已齐套" : "未齐套") + "</span>";
+    } else {
+      set.innerHTML = "<span>素材单独生效</span><span class=\"goal-badge\">不考核全套</span>";
+    }
+    document.getElementById("goal-rows").innerHTML = row.items.map(function (item) {
+      var pct = item[2] > 0 ? Math.min(100, Math.round(item[1] / item[2] * 100)) : 0;
+      var money = '<span class="goal-plus">' + (item[3] ? "+¥" + item[3] : "") + "</span>";
+      return "<div class=\"goal-line\"><span>" + item[0] + "</span><span class=\"goal-bar\"><i style=\"width:" + pct + "%\"></i></span><span>" + item[1] + "/" + item[2] + "</span>" + money + "</div>";
+    }).join("");
+    document.getElementById("goal-money").innerHTML = "<div><span>应发</span><b>" + yuan(row.due) + "</b></div><div><span>已发</span><b>" + yuan(row.paid) + "</b></div><div><span>剩余</span><b>" + yuan(row.remain) + "</b></div>";
+    var overlay = row.items.reduce(function (sum, item) { return sum + item[3]; }, 0);
+    document.getElementById("goal-formula").textContent = row.setTarget > 0
+      ? "全套 ¥" + row.setAmount + " + 叠加 ¥" + overlay
+      : "素材单独生效，独立计奖 ¥" + row.due;
+    document.getElementById("goal-pub").textContent = String(row.pub);
+  }
+  document.getElementById("goal-card").addEventListener("click", function (e) {
+    var periodBtn = e.target.closest("[data-period]");
+    if (periodBtn) { period = periodBtn.getAttribute("data-period"); document.querySelectorAll("[data-period]").forEach(function (btn) { btn.classList.toggle("on", btn === periodBtn); }); render(); return; }
+    var vpBtn = e.target.closest("[data-vp]");
+    if (vpBtn) { vp = vpBtn.getAttribute("data-vp"); render(); }
+  });
+  render();
+</script>
+
+
+</main>
+<script src="../chrome.js"></script>
+</body>
+</html>

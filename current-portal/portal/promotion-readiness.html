@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>晋升准备度</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="portal" data-active="me">
+<div id="chrome"></div>
+<main class="main">
+<p class="route">静态演示 · 假数据 · 不构成晋升承诺</p>
+<p class="lead promo-back"><a href="me.html">← 个人中心</a> · BP <a href="../admin/promotion-analysis.html">晋升分析台</a></p>
+<h1>晋升准备度</h1>
+<p class="lead" id="intro"></p>
+
+<div id="content"></div>
+</main>
+<script src="../promotion-eligibility.js"></script>
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  var id = params.get("id") || PromotionDemo.defaultEmployeeId;
+  var r = PromotionDemo.byEmployeeId(id);
+  if (!r) {
+    document.getElementById("content").innerHTML = "<div class=\"card\"><p class=\"lead\">未找到员工演示数据。</p></div>";
+    return;
+  }
+  var e = r.employee;
+  var W = PromotionDemo.WINDOW;
+  document.getElementById("intro").innerHTML =
+    "<b>" + PromotionDemo.escapeText(e.name) + "</b> · " + PromotionDemo.escapeText(e.dept) +
+    " · 窗口 " + W.label + "（截止 " + W.cutoff + "）· 目标 " + PromotionDemo.escapeText(r.targetLevel);
+
+  function bar(value, max, cls) {
+    var pct = Math.min(100, Math.round((value / max) * 100));
+    return "<div class=\"promo-bar " + cls + "\"><span style=\"width:" + pct + "%\"></span></div>";
+  }
+
+  function linesBlock() {
+    if (!r.lines) return "";
+    var y = r.lines.yellow;
+    var rd = r.lines.red;
+    var avg = r.avg != null ? r.avg : 0;
+    var tot = r.total != null ? r.total : 0;
+    return "<div class=\"card promo-lines\">" +
+      "<h2>与红线 / 黄线对比</h2>" +
+      "<div class=\"promo-line-row\"><span>均值</span><b>" + (r.avg != null ? r.avg.toFixed(3) : "—") + "</b>" +
+      (r.avg != null ? bar(avg, rd.avg, "promo-bar-red") : "") +
+      "<p class=\"lead\">黄线 ≥ " + y.avg + " · 红线 ≥ " + rd.avg + "</p></div>" +
+      "<div class=\"promo-line-row\"><span>总分</span><b>" + (r.total != null ? r.total.toFixed(1) : "—") + "</b>" +
+      (r.total != null ? bar(tot, rd.total, "promo-bar-red") : "") +
+      "<p class=\"lead\">黄线 ≥ " + y.total + " · 红线 ≥ " + rd.total + "</p></div>" +
+      (r.gap ? "<p class=\"lead promo-gap\">距黄线：均值还差 " + r.gap.avgToYellow.toFixed(3) +
+        "，总分还差 " + r.gap.totalToYellow.toFixed(1) + "</p>" : "") +
+      "</div>";
+  }
+
+  function thresholdBlock() {
+    var items = r.threshold.items.map(function (it) {
+      return "<li class=\"" + (it.ok ? "ok" : "bad") + "\"><span>" + PromotionDemo.escapeText(it.label) + "</span>" +
+        "<small>" + PromotionDemo.escapeText(it.detail) + "</small></li>";
+    }).join("");
+    return "<div class=\"card\"><h2>门槛条件</h2><ul class=\"promo-checklist\">" + items + "</ul></div>";
+  }
+
+  function cyclesBlock() {
+    var cards = r.slots.map(function (s) {
+      var sc = s.effectiveScore != null ? s.effectiveScore.toFixed(1) : "—";
+      var note = s.normalized
+        ? "<p class=\"promo-slot-note\">计分按 <b>A（1.5）</b>，原档 " + PromotionDemo.escapeText(s.display) + " 不变</p>"
+        : (s.missing ? "<p class=\"promo-slot-note\">该期尚未出档</p>" : "<p class=\"promo-slot-note\">计分 " + sc + "</p>");
+      return "<div class=\"promo-slot\">" +
+        "<span class=\"promo-slot-cycle\">" + PromotionDemo.escapeText(s.cycleLabel) + "</span>" +
+        PromotionDemo.gradeChip(s) +
+        note +
+        "</div>";
+    }).join("");
+    return "<div class=\"card\"><h2>观察四期</h2><div class=\"promo-slots\">" + cards + "</div>" +
+      (e.promotionOverlay ? "<p class=\"lead promo-overlay\">*" + PromotionDemo.escapeText(e.promotionOverlay.note) + "</p>" : "") +
+      "</div>";
+  }
+
+  var statusCard =
+    "<div class=\"card promo-status-card\">" +
+    "<span class=\"promo-pill " + r.statusClass + " promo-pill-lg\">" + PromotionDemo.escapeText(r.statusLabel) + "</span>" +
+    "<p class=\"lead\">以上为规则演算结果，最终以 HR 晋升窗口通知为准。单期下限仍校验<b>原档</b>是否 ≥ B。</p>" +
+    "</div>";
+
+  if (id !== PromotionDemo.defaultEmployeeId) {
+    document.querySelector(".promo-back").innerHTML +=
+      " · <a href=\"promotion-readiness.html\">回到默认（吴冰娜）</a>";
+  }
+
+  document.getElementById("content").innerHTML =
+    statusCard + thresholdBlock() + cyclesBlock() + linesBlock();
+
+  var demoSwitch = "<div class=\"card\"><h2>切换演示人</h2><div class=\"row promo-demo-picks\">" +
+    PromotionDemo.EMPLOYEES.map(function (emp) {
+      var on = emp.id === id ? " on" : "";
+      return "<a class=\"chip" + on + "\" href=\"promotion-readiness.html?id=" + encodeURIComponent(emp.id) + "\">" +
+        PromotionDemo.escapeText(emp.name) + "</a>";
+    }).join("") + "</div></div>";
+  document.getElementById("content").insertAdjacentHTML("beforeend", demoSwitch);
+})();
+</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

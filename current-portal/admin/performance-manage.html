@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>季度绩效管理</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="admin" data-active="performance">
+<div id="chrome"></div>
+<main class="main" id="perf-admin-main"></main>
+<script src="../portal/quarterly-perf-mock.js"></script>
+<script src="../portal/quarterly-perf.js"></script>
+<script>
+  QuarterlyPerf.mountAdmin(document.getElementById("perf-admin-main"));
+</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

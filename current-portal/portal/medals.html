@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>勋章墙</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="portal" data-active="me">
+<div id="chrome"></div>
+<main class="main me-main">
+<h1>勋章墙</h1>
+<p class="lead">展示已获得的勋章与铭牌；未获得项为灰显。与后台勋章管理 catalog 一致（localStorage 模拟）。</p>
+<div class="card" id="medals-wall"></div>
+<p class="lead"><a href="me.html">返回个人中心</a></p>
+</main>
+<script src="../medals-mock.js"></script>
+<script>
+  (function () {
+    var el = document.getElementById("medals-wall");
+    if (window.CognitionMedals && el) {
+      el.innerHTML = CognitionMedals.wallMarkup(CognitionMedals.loadUser());
+    } else if (el) {
+      el.innerHTML = "<p class=\"lead\">勋章数据未加载。</p>";
+    }
+  })();
+</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

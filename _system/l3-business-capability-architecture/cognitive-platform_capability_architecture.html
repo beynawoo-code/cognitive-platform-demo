@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>认知平台 · L3 业务能力架构</title>
+  <meta name="author" content="@beynawoo-code" />
+  <style>
+    :root {
+      --bg:#07090f; --card:#0e1422; --bd:rgba(255,255,255,.07); --txt:#dde6f5; --mut:#7a90b0;
+      --font:Inter,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--txt);padding:36px 40px 72px;line-height:1.55;font-size:14px}
+    .badge{display:inline-flex;padding:5px 14px;border-radius:99px;background:rgba(168,85,247,.18);border:1px solid rgba(168,85,247,.4);font-size:11px;font-weight:700;color:#c084fc;letter-spacing:.08em}
+    h1{font-size:30px;font-weight:900;margin:12px 0 8px}
+    .lead{color:var(--mut);max-width:840px;margin-bottom:24px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+    .dom{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px 16px 14px;border-top:3px solid var(--c)}
+    .d1{--c:#6366f1}.d2{--c:#06b6d4}.d3{--c:#0ea5e9}.d4{--c:#14b8a6}.d5{--c:#f59e0b}.d6{--c:#f97316}
+    .dom h3{font-size:14px;font-weight:800;margin-bottom:4px}
+    .owner{font-size:11px;color:var(--mut);margin-bottom:10px}
+    .dom ul{padding-left:16px;font-size:12.5px;color:var(--mut)}
+    .dom li{margin:4px 0}
+    footer{margin-top:40px;font-size:12px;color:var(--mut)}
+  </style>
+</head>
+<body>
+  <span class="badge">L3 · CAPABILITY</span>
+  <h1>认知平台 · 业务能力架构</h1>
+  <p class="lead">6 大能力域 × 18 项二级能力，从现网工作流抽象，不到菜单粒度。主责为归口角色。分层关系见 <a href="./cognitive-platform-capability-framework.html">功能板块框架图</a>。</p>
+  <div class="grid">
+    <article class="dom d1">
+      <h3>① 内容生产与治理</h3>
+      <div class="owner">主责 OPS · 协同 MENTOR / BP</div>
+      <ul>
+        <li>结构化提报（BDA / 素材）</li>
+        <li>审核上下架（含上榜）</li>
+        <li>官方运营位（稿件 / 活动）</li>
+      </ul>
+    </article>
+    <article class="dom d2">
+      <h3>② 知识分发与发现</h3>
+      <div class="owner">主责 EMP · 协同 OPS</div>
+      <ul>
+        <li>信息流聚合</li>
+        <li>检索与筛选</li>
+        <li>话题标签</li>
+      </ul>
+    </article>
+    <article class="dom d3">
+      <h3>③ 学习与认证</h3>
+      <div class="owner">主责 LEARN · 协同 EMP</div>
+      <ul>
+        <li>课程编排</li>
+        <li>题库与组卷</li>
+        <li>考试执行</li>
+      </ul>
+    </article>
+    <article class="dom d4">
+      <h3>④ 互动与触达</h3>
+      <div class="owner">主责 EMP</div>
+      <ul>
+        <li>内容互动（有用 / 收藏 / 评论）</li>
+        <li>消息触达（分类 / 未读 / 深链）</li>
+      </ul>
+    </article>
+    <article class="dom d5">
+      <h3>⑤ 激励与成长</h3>
+      <div class="owner">主责 PTS / GROWTH</div>
+      <ul>
+        <li>积分账户</li>
+        <li>兑换履约</li>
+        <li>勋章铭牌</li>
+        <li>目标额度</li>
+      </ul>
+    </article>
+    <article class="dom d6">
+      <h3>⑥ 组织与权限</h3>
+      <div class="owner">主责 SYS · ERP 主壳</div>
+      <ul>
+        <li>身份会话（账密 / SSO / 钉钉）</li>
+        <li>菜单鉴权</li>
+        <li>导师资格</li>
+      </ul>
+    </article>
+  </div>
+  <p class="lead" style="margin-top:24px">价值点维护附属成长域，服务素材选岗与标签，不单列第七域。现网未核验入口的对象不进入本图。</p>
+  <footer>v1.0 · 2026-10-15 · 作者：@beynawoo-code</footer>
+</body>
+</html>

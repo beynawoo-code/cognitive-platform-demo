@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>认知平台 · L1 业务工作流</title>
+  <meta name="author" content="@beynawoo-code" />
+  <style>
+    :root {
+      --bg:#07090f; --card:#0e1422; --el:#141b2e; --bd:rgba(255,255,255,.07);
+      --txt:#dde6f5; --mut:#7a90b0; --dim:#4a5e78;
+      --blue:#3b82f6; --cyan:#06b6d4; --purple:#a855f7; --green:#22c55e; --amber:#f59e0b; --pink:#ec4899;
+      --font:Inter,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--txt);padding:36px 40px 72px;line-height:1.55;font-size:14px}
+    a{color:#7eb3ff}
+    .badge{display:inline-flex;padding:5px 14px;border-radius:99px;background:rgba(59,130,246,.18);border:1px solid rgba(59,130,246,.35);font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.08em}
+    h1{font-size:30px;font-weight:900;margin:12px 0 8px;letter-spacing:-.03em}
+    .lead{color:var(--mut);max-width:820px;margin-bottom:28px}
+    h2{font-size:18px;font-weight:800;margin:36px 0 14px}
+    .flow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+    .step{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;min-width:120px;flex:1}
+    .step .n{font-size:10px;font-weight:800;color:var(--cyan);letter-spacing:.06em}
+    .step b{display:block;font-size:13px;margin:4px 0 2px}
+    .step span{font-size:11px;color:var(--mut)}
+    .ext{border:1px dashed rgba(245,158,11,.4);color:var(--amber);padding:10px 14px;border-radius:10px;font-size:12px;margin:16px 0 8px}
+    table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--card);border-radius:12px;overflow:hidden}
+    th,td{padding:8px 10px;border-bottom:1px solid var(--bd);text-align:left;vertical-align:top}
+    th{color:var(--dim);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+    td{color:var(--mut)} td:first-child,td b{color:var(--txt)}
+    footer{margin-top:48px;color:var(--mut);font-size:12px}
+  </style>
+</head>
+<body>
+  <span class="badge">L1 · WORKFLOW</span>
+  <h1>认知平台 · 业务工作流</h1>
+  <p class="lead">现网主航道：提报/发布 → 审核上架 → 信息流消费与互动 → 课程/考试 → 激励兑换 → 运营复盘。只含已有入口的链路。</p>
+
+  <h2>总览</h2>
+  <div class="flow">
+    <div class="step"><div class="n">01</div><b>生产</b><span>BDA / 素材 / 官方稿 / 组课组卷</span></div>
+    <div class="step"><div class="n">02</div><b>治理</b><span>审核 · 发布 · 下线 · 上榜</span></div>
+    <div class="step"><div class="n">03</div><b>分发</b><span>首页四栏 · 搜索筛选 · 话题</span></div>
+    <div class="step"><div class="n">04</div><b>消费</b><span>详情 · 互动 · 学习 · 答题</span></div>
+    <div class="step"><div class="n">05</div><b>激励</b><span>积分奖金 · 勋章 · 商城</span></div>
+    <div class="step"><div class="n">06</div><b>复盘</b><span>统计 · 用户 · 目标额度</span></div>
+  </div>
+  <div class="ext">外部交接：ERP 主壳（登录/菜单/SSO）· user · digitize · 钉钉免登 · OSS · 考试超时任务</div>
+
+  <h2>1 专业素材提报上架</h2>
+  <table>
+    <tr><th>阶段</th><th>角色</th><th>动作</th><th>交付物</th></tr>
+    <tr><td>门槛</td><td>MENTOR</td><td>提报素材校验导师接口</td><td>岗位 / 价值点</td></tr>
+    <tr><td>填写</td><td>MENTOR</td><td>素材表单（Quill）</td><td>草稿或提交</td></tr>
+    <tr><td>治理</td><td>OPS / GROWTH</td><td>素材管理审核上下线</td><td>已发布</td></tr>
+    <tr><td>分发消费</td><td>EMP</td><td>首页「专业」+ 互动</td><td>卡片 / 详情 / 计数</td></tr>
+  </table>
+
+  <h2>2 BDA 提报与激励</h2>
+  <table>
+    <tr><th>阶段</th><th>角色</th><th>动作</th><th>交付物</th></tr>
+    <tr><td>填写</td><td>EMP</td><td>C-B-A 提报</td><td>草稿或提交</td></tr>
+    <tr><td>审核</td><td>OPS / BP</td><td>上级处理中 → BP 处理中 → 完成</td><td>审核状态</td></tr>
+    <tr><td>上架激励</td><td>OPS / BP</td><td>发布 / 上榜 / 奖金积分</td><td>CBDA 可见 + 流水</td></tr>
+    <tr><td>消费</td><td>EMP</td><td>首页「CBDA案例」</td><td>详情</td></tr>
+  </table>
+
+  <h2>3 官方发布与活动</h2>
+  <p class="lead">OPS 在后台创建发布内容、配置活动与话题；EMP 在「官方发布」栏消费。</p>
+
+  <h2>4 课程学习</h2>
+  <p class="lead">LEARN 组课（文档/图文/视频）→ EMP 在「课程」栏学习并上报进度。</p>
+
+  <h2>5 考试闭环</h2>
+  <div class="flow">
+    <div class="step"><div class="n">题库</div><b>LEARN</b><span>试题 / 主题</span></div>
+    <div class="step"><div class="n">组卷</div><b>LEARN</b><span>创建编辑复制考试</span></div>
+    <div class="step"><div class="n">应考</div><b>EMP</b><span>简介 → 答题 → 成绩 → 排行</span></div>
+    <div class="step"><div class="n">提题</div><b>EMP</b><span>提报考题回试题管理</span></div>
+  </div>
+
+  <h2>6 信息流、互动与消息</h2>
+  <p class="lead">四 Tab 发现 → 详情阅读 → 有用/收藏/评论 → 消息中心深链。触达事件由 digitize 写入，门户消费。</p>
+
+  <h2>7 积分兑换与个人资产</h2>
+  <p class="lead">入账（激励/目标/调整）→ EMP 商城兑换或加积分申请（需积分按钮权限）→ PTS 履约。勋章墙、铭牌、我的互动在「个人中心」。</p>
+
+  <h2>8 运营复盘</h2>
+  <p class="lead">SYS 用户管理与提报统计；GROWTH/SYS 目标额度。导入导出任务复用提报统计权限，不进侧栏。</p>
+
+  <footer>v1.0 · 2026-10-15 · 8 条现网路径 · 作者：@beynawoo-code</footer>
+</body>
+</html>

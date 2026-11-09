@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>个人中心</title>
+  <link rel="stylesheet" href="./portal-shell.css" />
+  <style>
+    .path { display: flex; align-items: center; flex-wrap: wrap; gap: 0; margin-top: 10px; }
+    .lv { width: 72px; height: 72px; border: 1px solid #2563eb; border-radius: 0; background: #eff6ff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; }
+    .lv b { font-size: 16px; }
+    .lv em { font-style: normal; font-size: 10px; font-weight: 600; color: #3b82f6; }
+    .lv.now { border-color: #16a34a; background: #f0fdf4; color: #166534; }
+    .lv.now em { color: #16a34a; }
+    .arr { width: 28px; text-align: center; color: #94a3b8; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .vp { min-width: 108px; padding: 8px 10px; border: 1px solid var(--hairline); border-radius: 0; font-size: 12px; font-weight: 700; background: #fff; }
+    .vp small { display: block; font-weight: 500; color: var(--ink-500); margin-top: 4px; }
+    .vp.on { border-color: #16a34a; color: #166534; background: #f0fdf4; }
+    .vp.expired { border-color: #d97706; color: #92400e; background: #fffbeb; }
+    .s-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 800px) { .s-grid { grid-template-columns: 1fr; } }
+    .s-row { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .cfg { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-top: 8px; }
+    .cfg label { font-size: 12px; color: var(--ink-600); display: flex; flex-direction: column; gap: 4px; }
+    .cfg input { width: 88px; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./me.html">认知平台 <span>COGNITION PLATFORM</span></a>
+    <nav class="tabs">
+      <span>专业</span><span>CBDA案例</span><span>课程</span><span>官方发布</span>
+    </nav>
+    <details class="user">
+      <summary><span class="avatar">吴</span>吴冰娜</summary>
+      <div class="menu">
+        <a href="./me.html">个人中心</a>
+        <a href="./learn.html">素材浏览</a>
+      </div>
+    </details>
+  </header>
+  <div class="wrap">
+    <div class="hero">
+      <div class="banner"></div>
+      <div class="who">
+        <div class="avatar">吴</div>
+        <h2>吴冰娜</h2>
+        <p>（DP）数字平台 · 产品 · 软件产品组长</p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">已绿价值点</div><div class="v" id="green-n">0</div></div>
+      <div class="stat"><div class="k">提报数</div><div class="v">8</div></div>
+      <div class="stat"><div class="k">互动数</div><div class="v" id="act">0</div></div>
+    </div>
+    <div class="card">
+      <h2>岗位价值点</h2>
+      <p class="meta">自主浏览素材，对价值点考试。达到后台配置的及格条件即标绿，有效期内保持绿色。</p>
+      <div id="vps" class="chips"></div>
+      <div class="actions" style="margin-top:10px">
+        <a class="btn" href="./learn.html">浏览素材</a>
+        <a class="btn ghost" href="./exam.html">去考试</a>
+      </div>
+      <p class="note" id="cfg-note"></p>
+    </div>
+    <div class="card">
+      <h2>绩效 S</h2>
+      <p class="meta">未来半年。只填三条业务结果和三条挑战，不设权重。</p>
+      <form id="sform">
+        <div class="s-grid">
+          <div>
+            <h3 style="font-size:13px;margin-bottom:8px">业务结果</h3>
+            <div id="results"></div>
+          </div>
+          <div>
+            <h3 style="font-size:13px;margin-bottom:8px">挑战</h3>
+            <div id="challenges"></div>
+          </div>
+        </div>
+        <button class="btn" type="submit">线上提交</button>
+        <span class="meta" id="s-msg"></span>
+      </form>
+    </div>
+    <div class="card">
+      <h2>晋升路径</h2>
+      <p class="meta">直角方块。只展示实际停留过的等级。4.1 直接到 5.1，不出现 4.2。</p>
+      <div id="levels" class="path"></div>
+    </div>
+    <div class="card">
+      <h2>最近互动</h2>
+      <div id="recent" class="meta">还没有浏览或评论。</div>
+    </div>
+  </div>
+  <script src="./demo-state.js"></script>
+  <script>
+    var D = VpslpDemo;
+    var state = D.load();
+
+    function paint() {
+      var on = 0;
+      document.getElementById("vps").innerHTML = D.POINTS.map(function (p) {
+        var st = D.greenStatus(state, p.id);
+        if (st.status === "on") on += 1;
+        var extra = "";
+        if (st.status === "on") extra = "剩余至 " + st.expiresAt.slice(0, 10);
+        if (st.status === "expired") extra = "需重考";
+        var can = D.materialsForPoint(p.id).length ? " · <a href='./exam.html?p=" + p.id + "'>考试</a>" : "";
+        return "<div class='vp " + st.status + "'>" + p.name + "<small>" + st.label + (extra ? " · " + extra : "") + can + "</small></div>";
+      }).join("");
+      document.getElementById("green-n").textContent = String(on);
+      var rule = D.ruleOf(state);
+      document.getElementById("cfg-note").textContent = "全体规则由后台配置：及格 " + rule.minPassCount + " 次 ≥ " + rule.passScore + " 分即绿，有效 " + rule.validMonths + " 个月。";
+      var s = state.sPerf;
+      document.getElementById("results").innerHTML = [0, 1, 2].map(function (i) {
+        return "<div class='s-row'><span>" + (i + 1) + "</span><input name='r' value='" + (s.results[i] || "").replace(/'/g, "&#39;") + "' placeholder='一条业务结果' /></div>";
+      }).join("");
+      document.getElementById("challenges").innerHTML = [0, 1, 2].map(function (i) {
+        return "<div class='s-row'><span>" + (i + 1) + "</span><input name='c' value='" + (s.challenges[i] || "").replace(/'/g, "&#39;") + "' placeholder='一条挑战' /></div>";
+      }).join("");
+      document.getElementById("levels").innerHTML = D.STAYED_LEVELS.map(function (lv, i) {
+        var box = "<div class='lv" + (lv.current ? " now" : "") + "'><b>" + lv.code + "</b><em>" + (lv.current ? "当前" : "停留") + "</em></div>";
+        return (i ? "<div class='arr'>→</div>" : "") + box;
+      }).join("");
+    }
+    paint();
+
+    var acts = Object.keys(state.interactions).reduce(function (n, id) {
+      var it = state.interactions[id];
+      return n + (it.views || 0) + (it.comments ? it.comments.length : 0);
+    }, 0);
+    document.getElementById("act").textContent = String(acts);
+    var lines = [];
+    D.MATERIALS.forEach(function (m) {
+      var it = state.interactions[m.id];
+      if (!it) return;
+      var bits = [];
+      if (it.views) bits.push("浏览 " + it.views);
+      if (it.comments && it.comments.length) bits.push("评论 " + it.comments.length);
+      if (bits.length) lines.push("<div class='round'>" + m.title + " · " + bits.join(" / ") + "</div>");
+    });
+    if (lines.length) document.getElementById("recent").innerHTML = lines.join("");
+
+    document.getElementById("sform").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var rs = [].map.call(document.querySelectorAll("input[name=r]"), function (el) { return el.value.trim(); });
+      var cs = [].map.call(document.querySelectorAll("input[name=c]"), function (el) { return el.value.trim(); });
+      state.sPerf = { results: rs, challenges: cs, at: new Date().toISOString() };
+      D.save(state);
+      document.getElementById("s-msg").textContent = "已提交";
+    });
+  </script>
+</body>
+</html>

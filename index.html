@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>认知平台 · 上层架构导航</title>
+  <meta name="author" content="@beynawoo-code" />
+  <style>
+    :root {
+      --bg: #07090f; --card: #0e1422; --el: #141b2e; --bd: rgba(255,255,255,.08);
+      --txt: #dde6f5; --mut: #7a90b0; --blue: #3b82f6; --amber: #f59e0b;
+      --font: Inter, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: var(--bg); color: var(--txt); padding: 48px 28px 72px; }
+    h1 { font-size: 28px; font-weight: 900; margin: 12px 0 8px; }
+    .sub { color: var(--mut); max-width: 640px; }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 99px; border: 1px solid rgba(245,158,11,.4); color: var(--amber); font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 28px; max-width: 960px; }
+    a.card { display: block; padding: 16px; background: var(--card); border: 1px solid var(--bd); border-radius: 12px; color: var(--txt); text-decoration: none; }
+    a.card:hover { border-color: rgba(59,130,246,.45); }
+    a.card b { display: block; margin-bottom: 6px; }
+    a.card span { font-size: 12px; color: var(--mut); }
+    footer { margin-top: 40px; font-size: 12px; color: var(--mut); }
+  </style>
+</head>
+<body>
+  <span class="badge">COGNITIVE PLATFORM</span>
+  <h1>认知平台 · 上层架构</h1>
+  <p class="sub">现状盘点包。先打开全景地图，再按 L1 → L3 → L4 → L6 阅读。</p>
+  <div class="grid">
+    <a class="card" href="./_system/cognitive-platform-system-panorama-map.html"><b>A · 系统全景概览地图</b><span>边界、分层、成熟度、迭代路径</span></a>
+    <a class="card" href="./_system/l1-business-workflow/cognitive-platform-workflow.html"><b>L1 业务工作流</b><span>端到端现网主路径</span></a>
+    <a class="card" href="./vpslp-professional-growth/vpslp-function-design.html"><b>4期 · VPSLP 专业成长功能</b><span>成长方法全节点 → 自助路径 / 导师工作台</span></a>
+    <a class="card" href="./vpslp-professional-growth/demo/me.html"><b>4期 · 功能 Demo</b><span>个人中心进入价值点评估；导师随时选；素材作答回写雷达</span></a>
+    <a class="card" href="./_system/l3-business-capability-architecture/cognitive-platform-capability-framework.html"><b>功能板块框架图</b><span>入口 / 三大板块 / 互动 / 底座</span></a>
+    <a class="card" href="./_system/l3-business-capability-architecture/growth-platform-strategy-decomposition.html"><b>成长平台战略分解</b><span>VPSLP / 职业成长 × 现网板块</span></a>
+    <a class="card" href="./_system/l3-business-capability-architecture/cognitive-platform_capability_architecture.html"><b>L3 业务能力清单</b><span>6 域 × 18 项二级能力</span></a>
+    <a class="card" href="./current-portal/index.html"><b>现网前端可视化</b><span>门户主路径 + 后台 19 页，假数据可点</span></a>
+    <a class="card" href="./_system/l4-menu/cognitive-platform_menu_v1.html"><b>L4 菜单与角色矩阵</b><span>门户 IA + 后台 19 页</span></a>
+    <a class="card" href="./_system/l6-system-architecture/cognitive-platform_system_architecture.html"><b>L6 系统架构</b><span>双端静态站 + digitize</span></a>
+  </div>
+  <footer>v1.0 · 2026-10-15 · 作者：@beynawoo-code</footer>
+</body>
+</html>

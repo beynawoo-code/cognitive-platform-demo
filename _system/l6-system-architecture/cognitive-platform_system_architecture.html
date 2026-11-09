@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>认知平台 · L6 系统架构</title>
+  <meta name="author" content="@beynawoo-code" />
+  <style>
+    :root {
+      --bg:#07090f; --card:#0e1422; --bd:rgba(255,255,255,.07); --txt:#dde6f5; --mut:#7a90b0;
+      --font:Inter,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--txt);padding:36px 40px 72px;line-height:1.55;font-size:14px}
+    .badge{display:inline-flex;padding:5px 14px;border-radius:99px;background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.4);font-size:11px;font-weight:700;color:#fb923c;letter-spacing:.08em}
+    h1{font-size:28px;font-weight:900;margin:12px 0 8px}
+    .lead{color:var(--mut);max-width:860px;margin-bottom:22px}
+    h2{font-size:17px;font-weight:800;margin:28px 0 12px}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch}
+    .box{flex:1;min-width:160px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}
+    .box b{display:block;margin-bottom:6px}
+    .box span{font-size:12px;color:var(--mut)}
+    .center{border:2px solid rgba(59,130,246,.35);background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(168,85,247,.06))}
+    table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;font-size:12.5px}
+    th,td{padding:8px 10px;border-bottom:1px solid var(--bd);text-align:left;color:var(--mut)}
+    th{color:#4a5e78;font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+    td:first-child{color:var(--txt);font-weight:600}
+    footer{margin-top:36px;font-size:12px;color:var(--mut)}
+  </style>
+</head>
+<body>
+  <span class="badge">L6 · SYSTEM</span>
+  <h1>认知平台 · 系统架构</h1>
+  <p class="lead">pnpm monorepo 产出两个静态站：门户独立站 + 后台 Wujie 子应用。业务仍在 digitize，身份在 user。入口服从 L4，模块服从 L3。</p>
+
+  <h2>运行时拓扑</h2>
+  <div class="row">
+    <div class="box"><b>员工浏览器</b><span>门户 cognition 独立域 · 深链/考试结果可直达</span></div>
+    <div class="box"><b>运营浏览器</b><span>ERP 主壳内嵌 admin 子应用</span></div>
+    <div class="box"><b>钉钉</b><span>门户免登入口</span></div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div class="box center">
+      <b>apps/portal</b>
+      <span>React 19 · Vite 8 · Tailwind 4 · 登录/SSO/信息流/提报/考试/商城/消息/我的</span>
+    </div>
+    <div class="box center">
+      <b>apps/admin</b>
+      <span>React 19 · antd 6 · 19 侧栏页 · 与主壳共享 token · 菜单契约不可改 path</span>
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div class="box"><b>packages</b><span>api-client · tokens · rich-text-sanitize · domain-constants</span></div>
+    <div class="box"><b>网关</b><span>backend.lanjingerp.com · 信封解包 · 无 BFF</span></div>
+    <div class="box"><b>digitize JPC</b><span>内容 / 课考 / 互动 / 积分等表与 Job</span></div>
+    <div class="box"><b>user</b><span>登录 · 菜单树 · 组织账号权威</span></div>
+  </div>
+
+  <h2>集成契约</h2>
+  <table>
+    <tr><th>对端</th><th>方向</th><th>要点</th></tr>
+    <tr><td>ERP 主壳</td><td>入</td><td>Wujie 挂载；SSO fragment；leftMenuMap 对 path</td></tr>
+    <tr><td>user</td><td>双向</td><td>登录/用户信息/menus-role；门户 token 键独立</td></tr>
+    <tr><td>digitize</td><td>双向</td><td>业务 REST；推荐分与超时交卷由后端 Job 写、前端读</td></tr>
+    <tr><td>OSS</td><td>出</td><td>封面与附件公读</td></tr>
+    <tr><td>钉钉</td><td>入</td><td>/dingtalk-auth</td></tr>
+  </table>
+
+  <h2>分阶段（对齐 L4）</h2>
+  <table>
+    <tr><th>阶段</th><th>菜单子集</th><th>状态</th></tr>
+    <tr><td>现状</td><td>L4 全部现网入口</td><td>代码在仓并接网关路径</td></tr>
+    <tr><td>缺口</td><td>不新增菜单</td><td>错误态、部分字段、写操作验收、Wujie 沙箱实测、AI 试题页完整度</td></tr>
+    <tr><td>规划未进仓</td><td>—</td><td>不在本图增加模块</td></tr>
+  </table>
+  <footer>v1.0 · 2026-10-15 · 2 apps + 5 packages · 作者：@beynawoo-code</footer>
+</body>
+</html>

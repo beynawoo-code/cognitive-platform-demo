@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>绩效 S 管理</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="admin" data-active="s-perf">
+<div id="chrome"></div>
+<main class="main" id="s-perf-admin"></main>
+<script src="../portal/s-perf.js"></script>
+<script src="../portal/s-perf-admin.js"></script>
+<script>
+  SPerfAdmin.mountAdmin(document.getElementById("s-perf-admin"));
+</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

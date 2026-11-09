@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>认知平台 · 四期评审后功能设计</title>
+  <style>
+    :root { --bg:#07090f; --panel:#0e1422; --bd:rgba(255,255,255,.08); --txt:#dde6f5; --mut:#7a90b0; --font:Inter,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--txt);padding:28px 40px 72px;line-height:1.55}
+    a{color:#7eb3ff}
+    h1{font-size:26px;margin:8px 0}
+    h2{font-size:16px;margin:28px 0 10px;padding-left:10px;border-left:3px solid #22c55e}
+    p{color:var(--mut);font-size:13px;max-width:880px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+    @media(max-width:800px){.grid{grid-template-columns:1fr} body{padding:20px 16px 48px}}
+    .card{background:var(--panel);border:1px solid var(--bd);padding:14px}
+    .card h3{font-size:13px;margin-bottom:8px}
+    .card li{font-size:12.5px;color:var(--mut);margin-left:16px}
+    table{width:100%;border-collapse:collapse;background:var(--panel);font-size:12.5px;margin-top:8px}
+    th,td{border-bottom:1px solid var(--bd);padding:8px 10px;text-align:left;color:var(--mut)}
+    th{color:var(--txt)}
+    .path{display:flex;align-items:center;margin:12px 0}
+    .lv{width:72px;height:72px;border:1px solid #60a5fa;border-radius:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;background:rgba(59,130,246,.1)}
+    .lv.now{border-color:#22c55e;color:#86efac}
+    .arr{width:28px;text-align:center;color:#64748b}
+    .row{display:grid;grid-template-columns:24px 1fr;gap:8px;margin-bottom:6px;font-size:12px;color:var(--mut)}
+    footer{margin-top:28px;font-size:12px;color:var(--mut)}
+  </style>
+</head>
+<body>
+  <h1>四期功能设计 · 评审后</h1>
+  <p>专业成长改为自主浏览加考试点绿。绩效 S 仍用原名，只改表单。晋升路径用直角，只显示停留过的等级。</p>
+  <h2>1. 专业成长</h2>
+  <div class="grid">
+    <div class="card"><h3>去掉</h3><ul><li>导师选定与导师工作台</li><li>学习计划、一轮评估、总结闭环</li></ul></div>
+    <div class="card"><h3>留下</h3><ul><li>按岗位看价值点并浏览素材</li><li>随时考试，达到配置条件即标绿</li></ul></div>
+  </div>
+  <h2>2. 绿标（可配置，默认一次及格）</h2>
+  <table>
+    <tr><th>配置项</th><th>默认</th></tr>
+    <tr><td>及格分</td><td>80</td></tr>
+    <tr><td>所需及格次数</td><td>1（任意一次达到及格分即绿）</td></tr>
+    <tr><td>有效月数</td><td>6。到期未再及格则熄灭，重考达标后再绿</td></tr>
+  </table>
+  <h2>3. 绩效 S</h2>
+  <div class="grid">
+    <div class="card"><h3>业务结果 × 3</h3><div class="row"><span>1</span><span>一段预期结果，无权重</span></div><div class="row"><span>2</span><span>第二条</span></div><div class="row"><span>3</span><span>第三条</span></div></div>
+    <div class="card"><h3>挑战 × 3</h3><div class="row"><span>1</span><span>一段挑战</span></div><div class="row"><span>2</span><span>第二条</span></div><div class="row"><span>3</span><span>第三条</span></div></div>
+  </div>
+  <h2>4. 晋升路径</h2>
+  <div class="path">
+    <div class="lv"><b>3.2</b></div><div class="arr">→</div>
+    <div class="lv"><b>4.1</b></div><div class="arr">→</div>
+    <div class="lv now"><b>5.1</b></div>
+  </div>
+  <p>从 4.1 跳到 5.1 时不展示 4.2。方块直角。</p>
+  <footer>可操作 Demo：<a href="./demo/me.html">个人中心</a> · <a href="./demo/learn.html">素材</a> · <a href="./demo/exam.html">考试</a></footer>
+</body>
+</html>

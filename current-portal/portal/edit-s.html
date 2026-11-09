@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>编辑绩效 S</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="portal" data-active="home">
+<div id="chrome"></div>
+<main class="main">
+<p class="route">静态可视化 · 编辑已提报的绩效 S 目标（格式同提报页）</p>
+<h1 id="edit-s-title">编辑绩效 S</h1>
+<p class="lead">修改预期业绩结果和挑战，只写文字，不设权重。每项至少 3 条，可以继续新增。保存后返回个人中心填写 review。</p>
+<div id="edit-s-root"></div>
+</main>
+<script src="bda-report-mock.js"></script>
+<script src="s-perf.js"></script>
+<script>SPerf.mountEdit(document.getElementById("edit-s-root"));</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

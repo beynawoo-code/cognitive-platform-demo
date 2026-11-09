@@ -1,0 +1,68 @@
+---
+title: 认知平台 · 提报绩效 S 功能流程
+owner: "@beynawoo-code"
+date: 2026-11-09
+version: v1.0
+related:
+  - ./cognitive-platform-workflow.md
+  - ../README.md
+scope: current-portal 演示 · 绩效 S
+---
+
+# 提报绩效 S · 功能流程
+
+> 一个半年一条记录。HRBP 定窗口，员工提报并回写中期与最终，主管在接收页写反馈。HRBP 只读查看。
+
+时间顺序：开始提报早于截止提报，截止提报不晚于开放中期，开放中期早于截止中期，截止中期不晚于开放最终，开放最终早于截止最终。
+
+## 流程图
+
+```mermaid
+flowchart TD
+  hrbp["HRBP 设定六个窗口时间"] --> submit{"提报窗口"}
+  submit -->|未开始或已截止| locked["不能新申请，已填目标只读"]
+  submit -->|进行中| apply["员工申请本半年，不经上级审批"]
+  apply --> fill["填写 3 条预期业绩结果和 3 条挑战"]
+  fill --> check{"是否各满 3 条"}
+  check -->|未满| fill
+  check -->|已满| posted["提交并记下提报时间"]
+  posted --> center["个人中心可查看本周期"]
+  locked --> center
+  center --> mid{"中期窗口"}
+  mid -->|未开放| midRead["中期回顾、中期反馈只读"]
+  mid -->|开放| midEmp["员工填写中期回顾"]
+  midEmp --> midLead["主管在绩效接收填写中期反馈"]
+  midRead --> fin{"最终窗口"}
+  midLead --> fin
+  fin -->|未开放| finRead["最终结果、最终反馈只读"]
+  fin -->|开放| finEmp["员工填写最终结果"]
+  finEmp --> finLead["主管在绩效接收填写最终反馈"]
+  finRead --> closed["窗口截止后对应内容只读"]
+  finLead --> closed
+  hrbp -.-> view["HRBP 只读查看全员，详情在二次页面"]
+  view -.-> center
+```
+
+## 谁写哪一栏
+
+| 内容 | 员工 | 主管 | HRBP |
+|------|------|------|------|
+| 预期业绩结果、挑战 | 提报窗口内填写 | 只读 | 只读 |
+| 中期回顾 | 中期窗口内填写 | 只读 | 只读 |
+| 中期反馈 | 只读 | 中期窗口内，在绩效接收填写 | 只读 |
+| 最终结果 | 最终窗口内填写 | 只读 | 只读 |
+| 最终反馈 | 只读 | 最终窗口内，在绩效接收填写 | 只读 |
+
+主管接收页只含本组员工。HRBP 管理页看全员，详情不在列表内展开。
+
+## 页面
+
+| 角色 | 页面 |
+|------|------|
+| 员工 | 门户「提报绩效 S」、个人中心绩效 S |
+| 主管 | 门户「绩效 S 接收」 |
+| HRBP | 后台「绩效 S 管理」、绩效 S 详情 |
+
+---
+
+作者：@beynawoo-code

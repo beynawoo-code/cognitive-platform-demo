@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>成绩</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+  <script>
+    if (new URLSearchParams(location.search).get("round")) {
+      document.documentElement.classList.add("exam-result-lp-round");
+    }
+  </script>
+</head>
+<body data-shell="portal" data-active="exam">
+<div id="chrome"></div>
+<main class="main">
+<p class="route" id="exam-result-route">现网路由 <b>/exam/:id/result</b> · 静态可视化 · 假数据</p>
+<h1>成绩</h1>
+<p class="lead" id="exam-result-lead">分数、用时、对错。可去排行。</p>
+<div class="card"><h2 id="exam-result-score">86 分</h2><p class="lead" id="exam-result-meta">用时 18 分钟 · 及格</p></div>
+<div class="exam-result-actions" id="exam-result-actions">
+  <a class="btn" id="exam-result-ranking" href="exam-ranking.html">看排行</a>
+  <a class="chip" id="exam-result-submit-q" href="exam-submit-question.html">提报考题</a>
+</div>
+<p class="lead" id="exam-result-back" hidden><a href="me.html#learning-plan">返回学习计划</a></p>
+
+</main>
+<script>
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var score = params.get("score");
+    if (score) {
+      var el = document.getElementById("exam-result-score");
+      if (el) el.textContent = score + " 分";
+    }
+    if (params.get("round")) {
+      var hideIds = ["exam-result-route", "exam-result-lead", "exam-result-actions"];
+      hideIds.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.hidden = true;
+          el.style.display = "none";
+        }
+      });
+      var back = document.getElementById("exam-result-back");
+      if (back) {
+        back.hidden = false;
+        back.style.display = "";
+      }
+    }
+  })();
+</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

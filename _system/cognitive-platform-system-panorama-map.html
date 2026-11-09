@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>认知平台 · 系统全景概览地图</title>
+  <meta name="author" content="@beynawoo-code" />
+  <style>
+    :root {
+      --bg:#07090f; --bg-card:#0e1422; --bg-el:#141b2e; --border:rgba(255,255,255,.07);
+      --txt:#dde6f5; --txt2:#7a90b0; --txt3:#4a5e78;
+      --blue:#3b82f6; --green:#22c55e; --purple:#a855f7; --amber:#f59e0b; --cyan:#06b6d4; --orange:#f97316; --pink:#ec4899;
+      --r:10px; --r-lg:18px;
+      --font:Inter,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font);background:var(--bg);color:var(--txt);line-height:1.55;padding:36px 44px 72px;font-size:14px}
+    a{color:#7eb3ff;text-decoration:none} a:hover{text-decoration:underline}
+    .page-header{text-align:center;margin-bottom:28px}
+    .page-header .badge{display:inline-flex;padding:5px 14px;border-radius:99px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);font-size:11px;font-weight:700;color:var(--amber);letter-spacing:.08em;margin-bottom:12px}
+    .page-header h1{font-size:32px;font-weight:900;letter-spacing:-.03em;margin-bottom:8px}
+    .page-header p{color:var(--txt2);max-width:820px;margin:0 auto}
+    .toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:36px;padding:12px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg)}
+    .toc a{font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid var(--border);color:var(--txt2);background:var(--bg-el)}
+    .toc a:hover{color:var(--txt);text-decoration:none;border-color:rgba(100,180,255,.25)}
+    .sec-header{display:flex;align-items:center;gap:12px;margin:44px 0 18px}
+    .sec-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+    .n1{background:linear-gradient(135deg,var(--blue),var(--purple))}
+    .n2{background:linear-gradient(135deg,var(--cyan),var(--blue))}
+    .n3{background:linear-gradient(135deg,var(--purple),var(--orange))}
+    .n4{background:linear-gradient(135deg,var(--green),var(--cyan))}
+    .n5{background:linear-gradient(135deg,var(--amber),var(--orange))}
+    .n6{background:linear-gradient(135deg,var(--pink),var(--purple))}
+    .n7{background:linear-gradient(135deg,var(--orange),var(--amber))}
+    .n8{background:linear-gradient(135deg,var(--cyan),var(--green))}
+    .n9{background:linear-gradient(135deg,var(--blue),var(--green))}
+    .n10{background:linear-gradient(135deg,var(--purple),var(--blue))}
+    .sec-title{font-size:20px;font-weight:800}
+    .sec-desc{font-size:12.5px;color:var(--txt2)}
+    .boundary-callout{padding:16px 22px;border-radius:var(--r-lg);background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(168,85,247,.06));border:1px solid rgba(59,130,246,.25)}
+    .boundary-callout p{font-size:13px;color:var(--txt2)} .boundary-callout b{color:var(--txt)}
+    .meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+    @media(max-width:900px){.meta-grid,.caps,.menus{grid-template-columns:1fr 1fr !important}}
+    .meta-card{padding:14px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r)}
+    .meta-card .label{font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.06em}
+    .meta-card .value{font-size:13px;font-weight:700;margin-top:4px}
+    .layer-stack{display:flex;flex-direction:column;gap:10px}
+    .layer-row{display:grid;grid-template-columns:72px 1fr auto;gap:14px;align-items:stretch;padding:14px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg)}
+    .layer-badge{display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;border-radius:var(--r);color:#fff}
+    .l1{background:linear-gradient(135deg,#3b82f6,#6366f1)}
+    .l2{background:linear-gradient(135deg,#06b6d4,#3b82f6)}
+    .l3{background:linear-gradient(135deg,#a855f7,#ec4899)}
+    .l4{background:linear-gradient(135deg,#22c55e,#06b6d4)}
+    .l5{background:linear-gradient(135deg,#f59e0b,#f97316)}
+    .l6{background:linear-gradient(135deg,#f97316,#ef4444)}
+    .layer-body h4{font-size:14px;font-weight:800;margin-bottom:4px}
+    .layer-body p{font-size:12px;color:var(--txt2)}
+    .layer-link{display:flex;align-items:center;font-size:11.5px;font-weight:600;white-space:nowrap}
+    .caps,.menus{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .cap,.menu{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;border-top:3px solid var(--c,#3b82f6)}
+    .cap h4,.menu h4{font-size:13px;font-weight:800;margin-bottom:6px}
+    .cap ul{padding-left:16px;font-size:12px;color:var(--txt2)}
+    .pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:4px;border:1px solid var(--border);color:var(--txt2)}
+    .ok{color:#4ade80;border-color:rgba(34,197,94,.35)}
+    .wait{color:var(--amber);border-color:rgba(245,158,11,.35)}
+    .flow{display:flex;flex-wrap:wrap;gap:8px}
+    .st{background:var(--bg-el);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px}
+    table{width:100%;border-collapse:collapse;background:var(--bg-card);border-radius:12px;overflow:hidden;font-size:12.5px}
+    th,td{padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;color:var(--txt2);vertical-align:top}
+    th{font-size:10px;color:var(--txt3);letter-spacing:.05em}
+    td:first-child{color:var(--txt);font-weight:600}
+    .dep{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:10px;align-items:center}
+    .dep .mid{text-align:center;padding:18px;border:2px solid rgba(59,130,246,.35);border-radius:14px;background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(168,85,247,.06));font-weight:800}
+    .roles{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px}
+    .chip b{display:block;font-size:11px;color:var(--cyan)}
+    .entries{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    @media(max-width:900px){.entries,.dep{grid-template-columns:1fr} .layer-row{grid-template-columns:56px 1fr}}
+    .ent{display:block;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--txt)}
+    footer{margin-top:48px;text-align:center;font-size:12px;color:var(--txt2)}
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <div class="badge">SYSTEM PANORAMA MAP</div>
+    <h1>认知平台 · 系统全景概览地图</h1>
+    <p>成长平台的基石 · 供给与学习的操作系统。端到端关注专业成长与职业成长，把岗位经验转化为组织飞轮，专注成长效率。</p>
+  </header>
+  <nav class="toc">
+    <a href="#boundary">边界</a>
+    <a href="#layers">分层</a>
+    <a href="#framework">框架图</a>
+    <a href="#capabilities">能力</a>
+    <a href="#menus">菜单</a>
+    <a href="#workflow">工作流</a>
+    <a href="#dependencies">依赖</a>
+    <a href="#roles">角色</a>
+    <a href="#maturity">成熟度</a>
+    <a href="#mvp">迭代路径</a>
+    <a href="#entries">入口</a>
+  </nav>
+
+  <div class="sec-header" id="boundary">
+    <div class="sec-num n1">1</div>
+    <div><div class="sec-title">系统边界与定位</div><div class="sec-desc">做 / 不做 / 跨域</div></div>
+  </div>
+  <div class="boundary-callout">
+    <p><b>什么是认知平台。</b>成长平台的基石，供给与学习的操作系统；端到端关注专业成长（VPSLP：轻量级、导师制、自助式，评估、丰富供给、融入实战）与职业成长（务实：新挑战 / 高绩效 / 晋升节奏 / 收入结构；务虚：心理安全 / 自我认知 / 心流），把个人岗位经验转化进组织，专注成长效率。<br /><br />
+    <b>只做</b> 员工在门户发现、提报、学习、考试、互动、兑换；运营在 ERP 后台审核、组卷、激励与积分履约。<br />
+    <b>不做</b> 组织账号主数据、广告投放、订单履约、财务过账、通用项目管理。<br />
+    <b>跨域</b> 鉴权菜单归 ERP <code>systemCode=cognition</code>；业务数据归 digitize；门户独立站，后台 Wujie。</p>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-card"><div class="label">主用户</div><div class="value">EMP 全员 · OPS 内容运营</div></div>
+    <div class="meta-card"><div class="label">协同</div><div class="value">导师 / BP / 学习 / 成长 / 积分 / 系统 / 主壳</div></div>
+    <div class="meta-card"><div class="label">主航道</div><div class="value">提报上架 → 消费互动 → 学考 → 激励</div></div>
+    <div class="meta-card"><div class="label">规模</div><div class="value">内网站 · 可深链 · 后台泡在 ERP</div></div>
+  </div>
+
+  <div class="sec-header" id="layers">
+    <div class="sec-num n2">2</div>
+    <div><div class="sec-title">全景分层地图</div><div class="sec-desc">阅读顺序 = 文件夹序号</div></div>
+  </div>
+  <div class="layer-stack">
+    <div class="layer-row">
+      <div class="layer-badge l1">L1</div>
+      <div class="layer-body"><h4>业务工作流</h4><p>8 条现网路径：素材、BDA、官方发布、课程、考试、信息流互动、积分兑换、运营复盘。</p></div>
+      <a class="layer-link" href="./l1-business-workflow/cognitive-platform-workflow.html">打开 HTML</a>
+    </div>
+    <div class="layer-row">
+      <div class="layer-badge l2">L2</div>
+      <div class="layer-body"><h4>用户旅程</h4><p>待建 · 本轮占位，迭代时按 L1 四条优先旅程补 Persona。</p></div>
+      <a class="layer-link" href="./l2-user-journey/README.md">占位 README</a>
+    </div>
+    <div class="layer-row">
+      <div class="layer-badge l3">L3</div>
+      <div class="layer-body"><h4>业务能力架构</h4><p>功能板块框架图 + 6 域 × 18 项二级能力，从工作流抽象，无菜单粒度。</p></div>
+      <a class="layer-link" href="./l3-business-capability-architecture/cognitive-platform-capability-framework.html">打开框架图</a>
+    </div>
+    <div class="layer-row">
+      <div class="layer-badge l4">L4</div>
+      <div class="layer-body"><h4>菜单蓝图 + 角色矩阵</h4><p>门户 IA + 后台 7 组 19 页 × 拟用 8 角色。</p></div>
+      <a class="layer-link" href="./l4-menu/cognitive-platform_menu_v1.html">打开 HTML</a>
+    </div>
+    <div class="layer-row">
+      <div class="layer-badge l5">L5</div>
+      <div class="layer-body"><h4>用户故事</h4><p>待建 · 评审后按 L4 现状/缺口批量。</p></div>
+      <a class="layer-link" href="./l5-user-stories/README.md">占位 README</a>
+    </div>
+    <div class="layer-row">
+      <div class="layer-badge l6">L6</div>
+      <div class="layer-body"><h4>技术系统架构</h4><p>portal 独立站 · admin Wujie · digitize + user · 无 BFF。</p></div>
+      <a class="layer-link" href="./l6-system-architecture/cognitive-platform_system_architecture.html">打开 HTML</a>
+    </div>
+  </div>
+
+  <div class="sec-header" id="framework">
+    <div class="sec-num n3">3</div>
+    <div><div class="sec-title">功能板块框架</div><div class="sec-desc">入口 → 生产 / 学考 / 激励 → 互动 → 底座</div></div>
+  </div>
+  <div class="boundary-callout" style="margin-bottom:16px">
+    <p>现网功能按四层组织：<b>入口与分发</b>（首页四栏、搜索、话题）→ 中层三大板块（<b>内容生产与治理</b>、<b>学习与认证</b>、<b>激励与成长</b>）→ <b>统一互动与触达</b> → 横切（推荐计算 + 身份权限）。对象只含现网入口。</p>
+    <p style="margin-top:10px"><a href="./l3-business-capability-architecture/cognitive-platform-capability-framework.html"><b>打开功能板块框架图</b></a>（SVG 分层投屏）· <a href="./l3-business-capability-architecture/cognitive-platform_capability_architecture.html">六域能力清单</a> · <a href="./l3-business-capability-architecture/growth-platform-strategy-decomposition.html">成长平台战略分解</a></p>
+  </div>
+
+  <div class="sec-header" id="capabilities">
+    <div class="sec-num n3">3b</div>
+    <div><div class="sec-title">业务能力摘要</div><div class="sec-desc">摘录 L3，不发明能力名</div></div>
+  </div>
+  <div class="caps">
+    <div class="cap" style="--c:#6366f1"><h4>① 内容生产与治理 <span class="pill ok">现状</span></h4><ul><li>结构化提报</li><li>审核上下架</li><li>官方运营位</li></ul></div>
+    <div class="cap" style="--c:#06b6d4"><h4>② 知识分发与发现 <span class="pill ok">现状</span></h4><ul><li>信息流聚合</li><li>检索筛选</li><li>话题标签</li></ul></div>
+    <div class="cap" style="--c:#0ea5e9"><h4>③ 学习与认证 <span class="pill ok">现状</span></h4><ul><li>课程编排</li><li>题库组卷</li><li>考试执行</li></ul></div>
+    <div class="cap" style="--c:#14b8a6"><h4>④ 互动与触达 <span class="pill ok">现状</span></h4><ul><li>内容互动</li><li>消息触达</li></ul></div>
+    <div class="cap" style="--c:#f59e0b"><h4>⑤ 激励与成长 <span class="pill ok">现状</span></h4><ul><li>积分账户 / 兑换履约</li><li>勋章铭牌 / 目标额度</li></ul></div>
+    <div class="cap" style="--c:#f97316"><h4>⑥ 组织与权限 <span class="pill ok">现状</span></h4><ul><li>身份会话</li><li>菜单鉴权 / 导师资格</li></ul></div>
+  </div>
+
+  <div class="sec-header" id="menus">
+    <div class="sec-num n4">4</div>
+    <div><div class="sec-title">菜单全景</div><div class="sec-desc">摘录 L4</div></div>
+  </div>
+  <div class="menus">
+    <div class="menu" style="--c:#3b82f6"><h4>门户 · 首页</h4><p class="sec-desc">专业 / CBDA案例 / 课程 / 官方发布</p></div>
+    <div class="menu" style="--c:#22c55e"><h4>门户 · 做事</h4><p class="sec-desc">提报 BDA·素材 · 考试 · 商城 · 消息 · 我的</p></div>
+    <div class="menu" style="--c:#a855f7"><h4>后台 · 运营</h4><p class="sec-desc">提报内容 / 发布 / 课考 / 话题 / BDA / 活动</p></div>
+    <div class="menu" style="--c:#f59e0b"><h4>后台 · 用户成长</h4><p class="sec-desc">用户 / 统计 / 目标 / 勋章 / 素材 / 价值点</p></div>
+    <div class="menu" style="--c:#06b6d4"><h4>后台 · 考试</h4><p class="sec-desc">AI试题生成（路由在仓）</p></div>
+    <div class="menu" style="--c:#f97316"><h4>后台 · 积分</h4><p class="sec-desc">商品 / 兑换订单 / 积分明细</p></div>
+  </div>
+
+  <div class="sec-header" id="workflow">
+    <div class="sec-num n5">5</div>
+    <div><div class="sec-title">业务工作流条</div><div class="sec-desc">对齐 L1，本轮无分菜单原型目录</div></div>
+  </div>
+  <div class="flow">
+    <div class="st">1 素材上架</div>
+    <div class="st">2 BDA 审核激励</div>
+    <div class="st">3 官方发布活动</div>
+    <div class="st">4 课程学习</div>
+    <div class="st">5 考试闭环</div>
+    <div class="st">6 信息流互动消息</div>
+    <div class="st">7 积分兑换</div>
+    <div class="st">8 运营复盘</div>
+  </div>
+  <table style="margin-top:14px">
+    <tr><th>L1 路径</th><th>L4 入口</th><th>状态</th></tr>
+    <tr><td>素材 / BDA / 发布</td><td>提报 + 素材/BDA/发布管理</td><td>现网</td></tr>
+    <tr><td>课程 / 考试</td><td>首页课程 + 考试中心 + 后台课考页</td><td>现网</td></tr>
+    <tr><td>积分兑换</td><td>商城 + 积分三页（需按钮码）</td><td>现网</td></tr>
+  </table>
+
+  <div class="sec-header" id="dependencies">
+    <div class="sec-num n6">6</div>
+    <div><div class="sec-title">跨系统依赖</div><div class="sec-desc">只画边界声明过的系统</div></div>
+  </div>
+  <div class="dep">
+    <div>
+      <div class="chip" style="margin-bottom:8px"><b>上游</b>ERP 主壳 · 钉钉 · user 账号</div>
+      <div class="chip"><b>文件</b>OSS 公读</div>
+    </div>
+    <div class="mid">认知平台<br /><span style="font-size:12px;font-weight:600;color:var(--txt2)">portal + admin</span></div>
+    <div>
+      <div class="chip" style="margin-bottom:8px"><b>领域</b>digitize JPC 业务与 Job</div>
+      <div class="chip"><b>原则</b>不写组织主数据，不接销售履约</div>
+    </div>
+  </div>
+
+  <div class="sec-header" id="roles">
+    <div class="sec-num n7">7</div>
+    <div><div class="sec-title">角色矩阵快照</div><div class="sec-desc">拟用代号 · 落地靠菜单码</div></div>
+  </div>
+  <div class="roles">
+    <div class="chip"><b>EMP</b>全员 · 门户主用户</div>
+    <div class="chip"><b>MENTOR</b>导师 · 素材提报</div>
+    <div class="chip"><b>OPS</b>内容运营</div>
+    <div class="chip"><b>BP</b>BDA 审核 / 奖金</div>
+    <div class="chip"><b>LEARN</b>学习运营</div>
+    <div class="chip"><b>GROWTH</b>成长运营</div>
+    <div class="chip"><b>PTS</b>积分运营</div>
+    <div class="chip"><b>SYS</b>系统管理</div>
+  </div>
+
+  <div class="sec-header" id="maturity">
+    <div class="sec-num n8">8</div>
+    <div><div class="sec-title">交付成熟度</div><div class="sec-desc">与本目录文件一致</div></div>
+  </div>
+  <table>
+    <tr><th>包</th><th>状态</th></tr>
+    <tr><td>_system README / A 全景</td><td>✅</td></tr>
+    <tr><td>L1 工作流 md + html</td><td>✅</td></tr>
+    <tr><td>L2 用户旅程</td><td>⏳ 占位</td></tr>
+    <tr><td>L3 能力 md + html</td><td>✅</td></tr>
+    <tr><td>L4 菜单 md + html</td><td>✅</td></tr>
+    <tr><td>L5 用户故事</td><td>⏳ 占位</td></tr>
+    <tr><td>L6 系统架构 md + html</td><td>✅</td></tr>
+    <tr><td>modules 分菜单原型</td><td>—</td></tr>
+  </table>
+
+  <div class="sec-header" id="mvp">
+    <div class="sec-num n9">9</div>
+    <div><div class="sec-title">迭代路径</div><div class="sec-desc">现状 / 代码缺口 / 规划未进仓 分开，避免混进 L4</div></div>
+  </div>
+  <table>
+    <tr><th>层</th><th>范围</th><th>动作建议</th></tr>
+    <tr><td>现状 P0</td><td>L4 已列门户 + 19 后台页</td><td>作为迭代基线，不删入口除非业务裁剪</td></tr>
+    <tr><td>代码缺口</td><td>列表失败态、部分后台字段未接、写操作验收、Wujie×React 沙箱、AI 试题页完整度</td><td>修现网质量，不加新菜单</td></tr>
+    <tr><td>规划未进仓</td><td>未出现在现网路由的能力（不在本表点名未核验对象）</td><td>先补 L2 旅程与范围拍板，再改 L3/L4，最后 L5</td></tr>
+  </table>
+
+  <div class="sec-header" id="entries">
+    <div class="sec-num n10">10</div>
+    <div><div class="sec-title">关键入口</div><div class="sec-desc">内部导航</div></div>
+  </div>
+  <div class="entries">
+    <a class="ent" href="../index.html"><b>方案导航</b><br /><span class="sec-desc">modules/index.html</span></a>
+    <a class="ent" href="./README.md"><b>_system README</b><br /><span class="sec-desc">边界宣言</span></a>
+    <a class="ent" href="./l3-business-capability-architecture/cognitive-platform-capability-framework.html"><b>功能板块框架图</b><br /><span class="sec-desc">分层 SVG</span></a>
+    <a class="ent" href="./l1-business-workflow/cognitive-platform-workflow.html"><b>L1</b><br /><span class="sec-desc">工作流</span></a>
+    <a class="ent" href="./l4-menu/cognitive-platform_menu_v1.html"><b>L4</b><br /><span class="sec-desc">菜单矩阵</span></a>
+  </div>
+
+  <footer>v1.0 · 2026-10-15 · 6 能力域 · 19 后台页 · 8 工作流 · 作者：@beynawoo-code</footer>
+</body>
+</html>

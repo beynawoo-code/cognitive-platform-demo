@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>答题</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="portal" data-active="exam">
+<div id="chrome"></div>
+<main class="main">
+<p class="route" id="exam-task-route">现网路由 <b>/exam/:id/tasking</b> · 静态可视化 · 假数据</p>
+<h1>答题</h1>
+<p class="lead" id="exam-task-lead">草稿可保留。超时由现网定时任务交卷。</p>
+<p class="exam-ai-badge" id="exam-task-ai-badge" hidden>AI 生成试题 · 学习计划轮次</p>
+<div class="card q"><b id="exam-task-q1">1. 过定位首先会带来什么？</b><label><input type="radio" name="q"/> 返工</label><label><input type="radio" name="q"/> 无影响</label></div>
+<a class="btn" id="exam-task-submit" href="exam-result.html">交卷</a>
+
+</main>
+<script>
+  (function () {
+    var round = new URLSearchParams(location.search).get("round");
+    if (!round) return;
+    var route = document.getElementById("exam-task-route");
+    if (route) route.hidden = true;
+    var lead = document.getElementById("exam-task-lead");
+    if (lead) lead.hidden = true;
+    var badge = document.getElementById("exam-task-ai-badge");
+    if (badge) badge.hidden = false;
+    var q1 = document.getElementById("exam-task-q1");
+    if (q1) q1.textContent = "1. 【需求价值分析】四象限中「高价值、低成本」需求通常应如何处理？";
+    var submit = document.getElementById("exam-task-submit");
+    if (submit) submit.href = "exam-result.html?round=" + encodeURIComponent(round);
+  })();
+</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

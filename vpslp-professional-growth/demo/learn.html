@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>素材浏览</title>
+  <link rel="stylesheet" href="./portal-shell.css" />
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./me.html">认知平台 <span>素材</span></a>
+    <nav class="tabs"><a href="./me.html">个人中心</a><a href="./exam.html">去考试</a></nav>
+  </header>
+  <div class="wrap">
+    <h1 class="h">价值点素材</h1>
+    <p class="meta">按价值点自由浏览。浏览和评论不决定是否标绿，标绿只看考试是否达到及格配置。</p>
+    <div class="card" id="list-card">
+      <h2 id="list-title">素材清单</h2>
+      <div class="mat-scroll">
+        <table class="mat-table" id="list">
+          <thead>
+            <tr>
+              <th>价值点</th>
+              <th>类型</th>
+              <th>素材</th>
+              <th>状态</th>
+              <th class="mat-col-num">评论</th>
+              <th class="mat-col-actions">操作</th>
+            </tr>
+          </thead>
+          <tbody id="list-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="./demo-state.js"></script>
+  <script>
+    var D = VpslpDemo;
+    var state = D.load();
+    var mats = D.selectedMaterials();
+    document.getElementById("list-title").textContent = "素材清单 · " + mats.length + " 条";
+    document.getElementById("list-body").innerHTML = mats.map(function (m) {
+      var st = D.materialStatus(state, m.id);
+      var met = D.materialMetrics(state, m.id);
+      var tagCls = st.ok ? " tag ok" : " tag";
+      var green = D.greenStatus(state, m.pointId);
+      return "<tr>" +
+        "<td>" + D.pointName(m.pointId) + " · " + green.label + "</td>" +
+        "<td><span class=\"tag\">" + m.kind + "</span></td>" +
+        "<td class=\"mat-row-title\"><a href=\"./material.html?m=" + encodeURIComponent(m.id) + "\">" + m.title + "</a></td>" +
+        "<td><span class=\"" + tagCls.trim() + "\">" + st.label + "</span></td>" +
+        "<td class=\"mat-num\">" + met.commentCount + "</td>" +
+        "<td class=\"mat-actions\">" +
+        "<a href=\"./material.html?m=" + encodeURIComponent(m.id) + "\">进入素材</a>" +
+        "<a href=\"./exam.html?p=" + encodeURIComponent(m.pointId) + "\">考试</a></td>" +
+        "</tr>";
+    }).join("");
+  </script>
+</body>
+</html>
