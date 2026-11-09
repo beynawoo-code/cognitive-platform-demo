@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>绩效 S 反馈</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="portal" data-active="home">
+<div id="chrome"></div>
+<main class="main" id="s-leader-detail"></main>
+<script src="s-perf.js"></script>
+<script src="s-perf-admin.js"></script>
+<script>
+  SPerfAdmin.mountLeaderDetail(document.getElementById("s-leader-detail"));
+</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

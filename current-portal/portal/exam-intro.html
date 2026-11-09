@@ -14,42 +14,9 @@
 <h1 id="exam-intro-title">装配工艺随堂测</h1>
 <p class="lead" id="exam-intro-lead">规则、时长、题目数。确认后进入答题。</p>
 <div class="card" id="exam-intro-rules"><p>20 题 · 30 分钟 · 及格 60 · 离开页面按现网规则处理。</p></div>
-<div class="card exam-ai-card" id="exam-intro-ai" hidden>
-  <p class="exam-ai-badge">AI 出题</p>
-  <ul class="exam-ai-meta">
-    <li>题量 20 · 时长 30 分钟 · 及格 60 分</li>
-  </ul>
-</div>
 <a class="btn" id="exam-intro-start" href="exam-tasking.html">开始答题</a>
-<p class="lead" id="exam-intro-back" hidden><a href="me.html#learning-plan">返回学习计划</a></p>
 
 </main>
-<script>
-  (function () {
-    var params = new URLSearchParams(location.search);
-    var title = params.get("title");
-    var round = params.get("round");
-    if (title) {
-      var h = document.getElementById("exam-intro-title");
-      if (h) h.textContent = title;
-      document.title = title;
-    }
-    if (round) {
-      var start = document.getElementById("exam-intro-start");
-      if (start) start.href = "exam-tasking.html?round=" + encodeURIComponent(round);
-      var back = document.getElementById("exam-intro-back");
-      if (back) back.hidden = false;
-      var route = document.getElementById("exam-intro-route");
-      if (route) route.hidden = true;
-      var lead = document.getElementById("exam-intro-lead");
-      if (lead) lead.hidden = true;
-      var rules = document.getElementById("exam-intro-rules");
-      if (rules) rules.hidden = true;
-      var ai = document.getElementById("exam-intro-ai");
-      if (ai) ai.hidden = false;
-    }
-  })();
-</script>
 <script src="../chrome.js"></script>
 </body>
 </html>

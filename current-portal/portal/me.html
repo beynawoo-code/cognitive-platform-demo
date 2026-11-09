@@ -53,7 +53,7 @@
         <p class="lead" id="me-current-perf-note"></p>
       </div>
       <div class="me-perf-box me-perf-next">
-        <span class="me-perf-label">预计进入</span>
+        <span class="me-perf-label">晋升预估</span>
         <b id="me-next-perf">—</b>
         <p class="lead" id="me-next-perf-note"></p>
       </div>
@@ -149,6 +149,7 @@
 <script src="../../vpslp-professional-growth/demo/demo-state.js"></script>
 <script src="quarterly-perf-mock.js"></script>
 <script src="quarterly-perf.js"></script>
+<script src="../promotion-eligibility.js"></script>
 <script src="s-perf.js"></script>
 <script>
   var vpCycle = "2026|h2";
@@ -190,22 +191,18 @@
     }
     var point = VpslpDemo.POINTS.filter(function (item) { return item.id === vpOpen; })[0];
     var row = VpslpDemo.cyclePoint(state, vpCycle, vpOpen);
-    var mats = row.materials.length
-      ? row.materials.map(function (item) {
-          var done = row.readIds.indexOf(item.id) >= 0;
-          return "<li><b>" + item.title + "</b><span>" + (done ? "已读" : "未读") + "</span></li>";
-        }).join("")
-      : "<li><b>该价值点暂无阅读材料</b><span>未读</span></li>";
+    var pointName = point ? point.name : "";
     var exams = row.exams.length
       ? row.exams.map(function (item) { return item.score + " 分"; }).join("、")
       : "未考";
+    var materialHref = "home.html?tab=prof&vp=" + encodeURIComponent(pointName);
+    var examHref = "../../vpslp-professional-growth/demo/exam.html?p=" + encodeURIComponent(vpOpen);
     detail.hidden = false;
     detail.innerHTML =
-      "<h3>" + (point ? point.name : "") + " · " + VpslpDemo.cycleLabel(vpCycle) + "</h3>" +
-      "<p>阅读材料</p><ul class=\"vp-cycle-mats\">" + mats + "</ul>" +
+      "<h3>" + pointName.replace(/&/g, "&amp;").replace(/</g, "&lt;") + " · " + VpslpDemo.cycleLabel(vpCycle) + "</h3>" +
       "<p>考试分数：" + exams + "</p>" +
       "<p>是否点亮：" + (row.lit ? "已点亮" : "未点亮") + "</p>" +
-      '<p class="lead"><a href="../../vpslp-professional-growth/demo/exam.html?p=' + encodeURIComponent(vpOpen) + '">去考试</a></p>';
+      '<p class="lead vp-cycle-actions"><a href="' + materialHref + '">看素材</a><a href="' + examHref + '">去考试</a></p>';
   }
 </script>
 <script>

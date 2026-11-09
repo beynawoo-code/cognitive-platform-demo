@@ -35,6 +35,8 @@
       peers: { support: "", note: "" },
       modules: [],
       submittedAt: null,
+      submittedMidAt: null,
+      submittedFinalAt: null,
     };
   }
 
@@ -190,6 +192,14 @@
             row.submittedAt = null;
             changed = true;
           }
+          if (row && row.submittedMidAt === undefined) {
+            row.submittedMidAt = null;
+            changed = true;
+          }
+          if (row && row.submittedFinalAt === undefined) {
+            row.submittedFinalAt = null;
+            changed = true;
+          }
           if (row) {
             (row.okr || []).forEach(function (item) {
               if (ensureGoalReviewFields(item)) changed = true;
@@ -220,6 +230,13 @@
       }
     } catch (e) {}
     var data = seed();
+    Object.keys(data).forEach(function (k) {
+      var item = data[k];
+      if (!item) return;
+      if (item.submittedAt === undefined) item.submittedAt = null;
+      if (item.submittedMidAt === undefined) item.submittedMidAt = null;
+      if (item.submittedFinalAt === undefined) item.submittedFinalAt = null;
+    });
     var row = data["2026|h2"];
     if (row) {
       syncModulesFromPlan(row);
@@ -282,7 +299,20 @@
 
   function parseWindowTime(value) {
     if (!value) return null;
-    var d = new Date(value);
+    var text = String(value).trim();
+    var matched = text.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?$/);
+    if (matched) {
+      var parsed = new Date(
+        Number(matched[1]),
+        Number(matched[2]) - 1,
+        Number(matched[3]),
+        Number(matched[4]),
+        Number(matched[5]),
+        Number(matched[6] || 0)
+      );
+      return isNaN(parsed.getTime()) ? null : parsed;
+    }
+    var d = new Date(text);
     return isNaN(d.getTime()) ? null : d;
   }
 
@@ -372,7 +402,9 @@
     if (/\.feedback(Mid|Final)$/.test(path)) return false;
     if (/\.resultMid$/.test(path)) return phase.mid === "open";
     if (/\.resultFinal$/.test(path)) return phase.final === "open";
-    if (/^(bizResults|challenges)\.\d+\.text$/.test(path)) return phase.submit === "open";
+    if (/^(bizResults|challenges)\.\d+\.text$/.test(path)) {
+      return phase.submit === "open" || phase.mid === "open" || phase.final === "open";
+    }
     return true;
   }
 
@@ -667,13 +699,13 @@
     if (raw && typeof raw === "object") {
       var text = raw.text || "";
       var same = !!(review.text && review.text === text);
-      return {
+      return copyItemIdentity({
         text: text,
         resultMid: raw.resultMid || "",
         resultFinal: raw.resultFinal || "",
         feedbackMid: raw.feedbackMid !== undefined ? raw.feedbackMid : (same ? (review.feedbackMid || "") : ""),
         feedbackFinal: raw.feedbackFinal !== undefined ? raw.feedbackFinal : (same ? (review.feedbackFinal || "") : ""),
-      };
+      }, raw);
     }
     var plain = raw == null ? "" : String(raw);
     var matched = !!(review.text && review.text === plain);
@@ -683,6 +715,40 @@
       resultFinal: matched ? (review.resultFinal || "") : "",
       feedbackMid: matched ? (review.feedbackMid || "") : "",
       feedbackFinal: matched ? (review.feedbackFinal || "") : "",
+    };
+  }
+
+  function copyItemIdentity(item, raw) {
+    if (raw && raw.id) item.id = raw.id;
+    if (raw && raw._added) item._added = true;
+    return item;
+  }
+
+  function newItemId() {
+    return "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function ensureReviewItemIds(row) {
+    ["bizResults", "challenges"].forEach(function (key) {
+      (row[key] || []).forEach(function (item) {
+        if (item && typeof item === "object" && !item.id) item.id = newItemId();
+      });
+    });
+  }
+
+  function reviewItemSnap(item) {
+    return {
+      id: item && item.id,
+      text: (item && item.text) || "",
+      resultMid: (item && item.resultMid) || "",
+    };
+  }
+
+  function snapshotReviewBase(row) {
+    ensureReviewItemIds(row);
+    return {
+      bizResults: (row.bizResults || []).map(reviewItemSnap),
+      challenges: (row.challenges || []).map(reviewItemSnap),
     };
   }
 
@@ -743,25 +809,59 @@
     }).length;
   }
 
+  var TEXT_LIMIT = 300;
+
+  function textLimitAttr() {
+    return ' maxlength="' + TEXT_LIMIT + '"';
+  }
+
+  function overTextLimit(value) {
+    return String(value || "").length > TEXT_LIMIT;
+  }
+
+  function textLimitError(list, label, field) {
+    var over = (list || []).some(function (item) {
+      if (!item || typeof item !== "object") return overTextLimit(item);
+      if (overTextLimit(item.text)) return true;
+      return !!(field && overTextLimit(item[field]));
+    });
+    return over ? label + "每条最多 " + TEXT_LIMIT + " 个字符。" : "";
+  }
+
   function validateSimpleS(row) {
     hydrateSimpleS(row);
     if (filledSimpleCount(row.bizResults) < 3) return "预期业绩结果至少填写 3 条。";
     if (filledSimpleCount(row.challenges) < 3) return "挑战至少填写 3 条。";
-    return "";
+    return textLimitError(row.bizResults, "预期业绩结果") || textLimitError(row.challenges, "挑战");
+  }
+
+  function readyReviewCount(list, field) {
+    return (list || []).filter(function (item) {
+      return item && String(item.text || "").trim() && String(item[field] || "").trim();
+    }).length;
+  }
+
+  function validateReviewS(row, field) {
+    var label = field === "resultFinal" ? "最终结果" : "中期回顾";
+    if (readyReviewCount(row.bizResults, field) < 3) return "预期业绩结果至少 3 条，每条都要有目标原文和" + label + "。";
+    if (readyReviewCount(row.challenges, field) < 3) return "挑战至少 3 条，每条都要有目标原文和" + label + "。";
+    return textLimitError(row.bizResults, "预期业绩结果", field) || textLimitError(row.challenges, "挑战", field);
   }
 
   function simpleField(key, index, item, sub, label, locked) {
     return '<div class="s-me-review-field"><label class="s-me-ph">' + label + "</label>" +
       '<input data-path="' + key + "." + index + "." + sub + '" value="' + escapeAttr(item[sub] || "") + '" placeholder="' + escapeAttr(label) + '"' +
+      (sub === "resultMid" || sub === "resultFinal" ? textLimitAttr() : "") +
       (locked ? ' disabled class="s-input-readonly"' : "") + "></div>";
   }
 
-  function simpleLines(title, key, items, placeholder, locks) {
+  function simpleLines(title, key, items, placeholder, locks, headExtra) {
     locks = locks || {};
     var rows = items.map(function (item, i) {
       return '<article class="s-simple-item s-simple-tone' + (i % 5) + '">' +
         '<label class="s-simple-line"><span>' + (i + 1) + "</span>" +
         '<input data-path="' + key + "." + i + '.text" value="' + escapeAttr(item.text || "") + '" placeholder="' + escapeAttr(placeholder) + '"' +
+        textLimitAttr() +
         (locks.text ? ' disabled class="s-input-readonly"' : "") + " /></label>" +
         '<div class="s-simple-pair">' +
         '<div class="s-simple-col">' +
@@ -775,13 +875,23 @@
         simpleField(key, i, item, "feedbackFinal", "最终反馈", !!locks.feedback) +
         "</div></div></article>";
     }).join("");
-    return '<div class="card s-me-section"><h2>' + escapeText(title) + "</h2>" + rows + "</div>";
+    var heading = headExtra
+      ? '<div class="s-me-section-head"><h2>' + escapeText(title) + "</h2>" + headExtra + "</div>"
+      : "<h2>" + escapeText(title) + "</h2>";
+    return '<div class="card s-me-section">' + heading + rows + "</div>";
   }
 
   function mePerfContentHtml(row, locks) {
     hydrateSimpleS(row);
-    return simpleLines("业务结果", "bizResults", row.bizResults, "一条预期业务结果", locks) +
+    var count = ((row && row.editLog) || []).filter(isReviewEditLog).length;
+    var logBtn = '<button type="button" class="chip" data-open-log>日志 <span class="s-edit-log-count">' + count + "</span></button>";
+    return simpleLines("业务结果", "bizResults", row.bizResults, "一条预期业务结果", locks, logBtn) +
       simpleLines("挑战", "challenges", row.challenges, "一条挑战", locks);
+  }
+
+  function trashButton(attrs) {
+    return '<button type="button" class="s-update-del" ' + attrs + ' aria-label="删除">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 13h8l1-13"/><path d="M10 11v6M14 11v6"/></svg></button>';
   }
 
   function submitTextBlock(step, title, hint, key, items, placeholder) {
@@ -789,10 +899,10 @@
     var rows = (items || []).map(function (item, i) {
       var text = item && typeof item === "object" ? (item.text || "") : (item || "");
       var del = items.length > 3
-        ? '<button type="button" class="s-form-del" data-remove="' + key + '" data-index="' + i + '">删除</button>'
+        ? trashButton('data-remove="' + key + '" data-index="' + i + '"')
         : '<span class="s-form-del-slot"></span>';
       return '<li class="s-form-row"><span>' + (i + 1) + "</span>" +
-        '<input data-path="' + key + "." + i + '.text" value="' + escapeAttr(text) + '" placeholder="' + escapeAttr(placeholder) + '" />' +
+        '<input data-path="' + key + "." + i + '.text" value="' + escapeAttr(text) + '" placeholder="' + escapeAttr(placeholder) + '"' + textLimitAttr() + " />" +
         del + "</li>";
     }).join("");
     return '<section class="s-form-block">' +
@@ -810,8 +920,8 @@
     hydrateSimpleS(row);
     return infoProfileCardHtml(row, { hideWeight: true }) +
       '<div class="s-form-stack">' +
-      submitTextBlock("一", "预期业绩结果", "只写文字，不设权重。至少 3 条，可以继续新增。", "bizResults", row.bizResults, "写一条预期业绩结果") +
-      submitTextBlock("二", "挑战", "只写文字，不设权重。至少 3 条，可以继续新增。", "challenges", row.challenges, "写一条挑战") +
+      submitTextBlock("一", "预期业绩结果", "只写文字，不设权重。至少 3 条，可以继续新增。每条最多 300 个字符。", "bizResults", row.bizResults, "写一条预期业绩结果") +
+      submitTextBlock("二", "挑战", "只写文字，不设权重。至少 3 条，可以继续新增。每条最多 300 个字符。", "challenges", row.challenges, "写一条挑战") +
       "</div>";
   }
 
@@ -837,26 +947,86 @@
   function mePerfHelpHtml(role) {
     var text = role === "leader"
       ? "点「编辑」在新页面修改一、二与 BDA 目标。下方随时填写中期/最终反馈；模块进度由员工更新。"
-      : "点「编辑」在新页面修改一、二与 BDA 目标。下方随时填写中期回顾 与最终达成；切换「主管」可查看反馈。";
+      : "业务结果和挑战在提报窗口修改。中期回顾、最终结果从门户入口提交，本页只读。主管反馈只读。";
     return '<span class="s-me-help">' +
       '<button type="button" class="s-me-help-btn" aria-label="填写说明" aria-describedby="s-me-help-tip">?</button>' +
       '<span class="s-me-help-tip" id="s-me-help-tip" role="tooltip">' + escapeText(text) + "</span>" +
       "</span>";
   }
 
+  function filledPrintItems(list) {
+    return (list || []).filter(function (item) {
+      return item && String(item.text || "").trim();
+    });
+  }
+
+  function printSectionHtml(title, items) {
+    var rows = filledPrintItems(items);
+    var body = rows.map(function (item, i) {
+      return '<article class="s-print-item">' +
+        '<p class="s-print-goal"><span class="s-print-no">⭐ ' + (i + 1) + ".</span> " + escapeText(item.text) + "</p>" +
+        '<p class="s-print-final"><span class="s-print-kicker">最终结果</span></p>' +
+        '<p class="s-print-text s-print-result">' + escapeText(item.resultFinal || "") + "</p>" +
+        "</article>";
+    }).join("");
+    return '<section class="s-print-section"><h2>' + escapeText(title) + "</h2>" + body + "</section>";
+  }
+
+  function printSheetHtml(meta) {
+    meta = meta || {};
+    var period = String(meta.periodLabel || "").replace(/\s+/g, "");
+    var title = (period || "") + "绩效S最终结果";
+    var who = [meta.dept, meta.role, meta.lv].filter(Boolean).join(" · ");
+    return '<article class="s-print-sheet">' +
+      '<header class="s-print-head">' +
+      '<h1>' + escapeText(title) + "</h1>" +
+      '<div class="s-print-who">' +
+      (meta.name ? '<p class="s-print-name">' + escapeText(meta.name) + "</p>" : "") +
+      (who ? '<p class="s-print-meta">' + escapeText(who) + "</p>" : "") +
+      "</div>" +
+      "</header>" +
+      printSectionHtml("预期业绩结果", meta.bizResults) +
+      printSectionHtml("挑战", meta.challenges) +
+      "</article>";
+  }
+
+  function printPerformance(meta) {
+    var root = document.getElementById("s-print-root");
+    if (!root) {
+      root = document.createElement("div");
+      root.id = "s-print-root";
+      document.body.appendChild(root);
+    }
+    root.innerHTML = printSheetHtml(meta);
+    window.print();
+  }
+
+  function reviewWhen(at) {
+    return at ? "最近提交 " + escapeText(formatSubmittedAt(at)) : "尚未提交";
+  }
+
   function mePerfBlockHtml(row, key, role, periodKeys) {
     var submitted = row.submittedAt
-      ? '<p class="lead s-me-submitted-hint">已于 ' + escapeText(formatSubmittedAt(row.submittedAt)) + " 保存。业务结果和挑战在提报窗口内修改；中期回顾、最终结果按窗口填写。</p>"
-      : '<p class="lead s-me-submitted-hint">业务结果和挑战在提报窗口内填写。中期回顾、最终结果按窗口开放。</p>';
+      ? '<p class="lead s-me-submitted-hint">已于 ' + escapeText(formatSubmittedAt(row.submittedAt)) + " 保存。业务结果和挑战在提报窗口内修改。</p>"
+      : '<p class="lead s-me-submitted-hint">业务结果和挑战在提报窗口内填写。</p>';
+    var reviewHint = '<p class="lead s-me-submitted-hint">中期回顾、最终结果在门户提交：' +
+      '<a href="update-s-mid.html">中期回顾</a>（' + reviewWhen(row.submittedMidAt) + "），" +
+      '<a href="update-s-final.html">最终结果</a>（' + reviewWhen(row.submittedFinalAt) + "）。</p>";
+    var locks = reviewLocks(key);
+    locks.mid = true;
+    locks.final = true;
     return '<div class="card s-me-perf-intro">' +
       '<div class="s-me-head">' +
       '<h2 class="s-me-title">绩效 S · ' + labelOf(key) + "</h2>" +
+      '<div class="s-me-head-actions"><button type="button" class="chip" data-print-me>打印</button></div>' +
       "</div>" +
       mePerfPeriodNavHtml(periodKeys, key) +
       submitted +
+      reviewHint +
       windowHintHtml(key, "s-leader-inbox.html") +
       "</div>" +
-      mePerfContentHtml(row, reviewLocks(key));
+      mePerfContentHtml(row, locks) +
+      meReviewLogDialogHtml(row);
   }
 
   function getPath(row, path) {
@@ -1032,6 +1202,130 @@
       editLogEntryListHtml(history.slice(0, 15), { emptyText: "暂无历史修改。" }) +
       "</section></div>"
     );
+  }
+
+  function isReviewEditLog(log) {
+    return !!(log && /^(bizResults|challenges)\./.test(log.field || ""));
+  }
+
+  function meReviewLogDialogHtml(row) {
+    var logs = ((row && row.editLog) || []).filter(isReviewEditLog);
+    var body = logs.length
+      ? editLogEntryListHtml(logs.slice(0, 30))
+      : '<p class="lead s-edit-log-empty">暂无修改记录。</p>';
+    return '<div class="s-log-modal" id="s-me-log-modal" hidden>' +
+      '<div class="s-log-modal-mask" data-close-log></div>' +
+      '<div class="s-log-modal-panel" role="dialog" aria-modal="true" aria-labelledby="s-me-log-title">' +
+      '<div class="s-log-modal-head"><h3 id="s-me-log-title">修改记录</h3>' +
+      '<button type="button" class="chip" data-close-log>关闭</button></div>' +
+      '<div class="s-log-modal-body">' + body + "</div></div></div>";
+  }
+
+  function reviewLogHtml(row) {
+    var logs = ((row && row.editLog) || []).filter(isReviewEditLog);
+    if (!logs.length) {
+      return '<details class="s-edit-log" open><summary>修改记录 <span class="s-edit-log-count">0</span></summary><p class="lead s-edit-log-empty">暂无修改记录。</p></details>';
+    }
+    return '<details class="s-edit-log" open><summary>修改记录 <span class="s-edit-log-count">' + logs.length + "</span></summary>" +
+      editLogEntryListHtml(logs.slice(0, 30)) + "</details>";
+  }
+
+  function collectReviewLogEntries(periodKey, row, baseline) {
+    if (!row || !baseline) return [];
+    var actor = (row.info && row.info.name) || "当前用户";
+    var now = new Date().toISOString();
+    var entries = [];
+    [["bizResults", "预期业绩结果"], ["challenges", "挑战"]].forEach(function (pair) {
+      var listName = pair[0];
+      var section = pair[1];
+      var beforeList = baseline[listName] || [];
+      var afterList = row[listName] || [];
+      var beforeById = {};
+      beforeList.forEach(function (item) {
+        if (item && item.id) beforeById[item.id] = item;
+      });
+      var afterById = {};
+      afterList.forEach(function (item) {
+        if (item && item.id) afterById[item.id] = item;
+      });
+      beforeList.forEach(function (item) {
+        if (!item || !item.id || afterById[item.id]) return;
+        entries.push({
+          at: now,
+          periodKey: periodKey,
+          role: "employee",
+          actor: actor,
+          field: listName + "." + item.id + ".remove",
+          label: section + " · 删除一条",
+          before: item.text || "—",
+          after: "—",
+        });
+      });
+      afterList.forEach(function (item, index) {
+        if (!item || !item.id) return;
+        var prev = beforeById[item.id];
+        var no = index + 1;
+        if (!prev) {
+          entries.push({
+            at: now,
+            periodKey: periodKey,
+            role: "employee",
+            actor: actor,
+            field: listName + "." + item.id + ".add",
+            label: section + " · 新增一条",
+            before: "—",
+            after: item.text || "（空）",
+          });
+          if (String(item.resultMid || "") !== "") {
+            entries.push({
+              at: now,
+              periodKey: periodKey,
+              role: "employee",
+              actor: actor,
+              field: listName + "." + item.id + ".resultMid",
+              label: section + " · 第" + no + "条 · 中期回顾",
+              before: "—",
+              after: item.resultMid,
+            });
+          }
+          return;
+        }
+        if ((prev.text || "") !== (item.text || "")) {
+          entries.push({
+            at: now,
+            periodKey: periodKey,
+            role: "employee",
+            actor: actor,
+            field: listName + "." + item.id + ".text",
+            label: section + " · 第" + no + "条 · 目标原文",
+            before: prev.text || "—",
+            after: item.text || "—",
+          });
+        }
+        if ((prev.resultMid || "") !== (item.resultMid || "")) {
+          entries.push({
+            at: now,
+            periodKey: periodKey,
+            role: "employee",
+            actor: actor,
+            field: listName + "." + item.id + ".resultMid",
+            label: section + " · 第" + no + "条 · 中期回顾",
+            before: prev.resultMid || "—",
+            after: item.resultMid || "—",
+          });
+        }
+      });
+    });
+    return entries;
+  }
+
+  function appendReviewLogs(periodKey, row, baseline) {
+    if (!row) return;
+    if (!Array.isArray(row.editLog)) row.editLog = [];
+    collectReviewLogEntries(periodKey, row, baseline).forEach(function (entry) {
+      row.editLog.unshift(entry);
+    });
+    if (row.editLog.length > 80) row.editLog.length = 80;
   }
 
   function editLogPanelHtml(row) {
@@ -1329,7 +1623,7 @@
         if (!list) return;
         var empty;
         if (listName === "bizResults" || listName === "challenges") {
-          empty = { text: "", resultMid: "", resultFinal: "", feedbackMid: "", feedbackFinal: "" };
+          empty = { id: newItemId(), text: "", resultMid: "", resultFinal: "", feedbackMid: "", feedbackFinal: "", _added: true };
         } else {
           var template = list[0] || (listName === "okr" ? { dim: "", content: "", weight: "" } : { theme: "", goal: "", weight: "" });
           empty = {};
@@ -1460,6 +1754,187 @@
     render();
   }
 
+  function reviewMeta(kind) {
+    if (kind === "final") {
+      return { field: "resultFinal", timeKey: "submittedFinalAt", phaseKey: "final", title: "最终结果", openKey: "finalOpen", closeKey: "finalClose" };
+    }
+    return { field: "resultMid", timeKey: "submittedMidAt", phaseKey: "mid", title: "中期回顾", openKey: "midOpen", closeKey: "midClose" };
+  }
+
+  function reviewWindowText(periodKey, meta) {
+    var w = windowOf(periodKey);
+    var phase = windowPhase(periodKey)[meta.phaseKey];
+    var head = phase === "before" ? meta.title + "尚未开放。" : (phase === "open" ? meta.title + "进行中。" : meta.title + "已截止。");
+    return head + "时间 " + formatWindowAt(w[meta.openKey]) + " 至 " + formatWindowAt(w[meta.closeKey]) + "。";
+  }
+
+  function showOnUpdate(item) {
+    if (!item) return false;
+    if (String(item.text || "").trim()) return true;
+    return !!item._added;
+  }
+
+  function ensureUpdateLists(row) {
+    if (!Array.isArray(row.bizResults)) row.bizResults = [];
+    if (!Array.isArray(row.challenges)) row.challenges = [];
+  }
+
+  function updateReviewBlock(step, title, hint, key, items, field, label, locked, goalEditable) {
+    var filled = readyReviewCount(items, field);
+    var seen = 0;
+    var rows = (items || []).map(function (item, i) {
+      if (!showOnUpdate(item)) return "";
+      seen += 1;
+      var hasText = String(item.text || "").trim();
+      var goal = hasText && !goalEditable
+        ? "<b>" + escapeText(item.text) + "</b>"
+        : '<input data-path="' + key + "." + i + '.text" value="' + escapeAttr(item.text || "") + '" placeholder="写一条目标"' + textLimitAttr() + (locked ? " disabled" : "") + " />";
+      var del = !locked && item._added
+        ? trashButton('data-update-remove="' + key + '" data-index="' + i + '"')
+        : "";
+      return '<li class="s-form-row s-update-row"><span>' + seen + "</span>" +
+        '<div class="s-update-copy"><div class="s-update-goal">' + goal + del + "</div>" +
+        '<input data-path="' + key + "." + i + "." + field + '" value="' + escapeAttr(item[field] || "") + '" placeholder="' + escapeAttr("填写" + label) + '"' +
+        textLimitAttr() + (locked ? " disabled" : "") + " /></div></li>";
+    }).join("");
+    var foot = locked ? "" : '<div class="s-form-foot"><button type="button" class="chip" data-add="' + key + '">加一条</button></div>';
+    return '<section class="s-form-block">' +
+      '<header class="s-form-block-head">' +
+      '<span class="s-form-step">' + escapeText(step) + "</span>" +
+      "<div><h2>" + escapeText(title) + "</h2><p>" + escapeText(hint) + "</p></div>" +
+      '<b class="s-form-count' + (filled >= 3 ? " is-ok" : "") + '">已填 ' + filled + " / 至少 3</b>" +
+      "</header>" +
+      '<ol class="s-form-rows">' + rows + "</ol>" + foot + "</section>";
+  }
+
+  function updateReviewBody(row, meta, locked) {
+    ensureUpdateLists(row);
+    var goalEditable = meta.phaseKey === "mid" && !locked;
+    var hint = goalEditable
+      ? "目标原文可以修改。没有的点「加一条」自己写。每条都要有目标原文和" + meta.title + "，至少 3 条。每条最多 300 个字符。提交后写入修改记录。"
+      : "已有目标原文不可改。没有的点「加一条」自己写。每条都要有目标原文和" + meta.title + "，至少 3 条。每条最多 300 个字符。";
+    return infoProfileCardHtml(row, { hideWeight: true }) +
+      '<div class="s-form-stack">' +
+      updateReviewBlock("一", "预期业绩结果", hint, "bizResults", row.bizResults, meta.field, meta.title, locked, goalEditable) +
+      updateReviewBlock("二", "挑战", hint, "challenges", row.challenges, meta.field, meta.title, locked, goalEditable) +
+      "</div>";
+  }
+
+  function updateBarHtml(row, meta) {
+    var label = row[meta.timeKey] ? "重新提交" : "提交";
+    var hint = row[meta.timeKey]
+      ? '<span class="s-submit-ok">已提交 ' + escapeText(formatSubmittedAt(row[meta.timeKey])) + "</span>"
+      : "";
+    return '<div class="s-submit-actions">' + hint +
+      '<button type="button" class="btn" id="s-submit-update">' + label + "</button></div>";
+  }
+
+  function mountUpdate(kind) {
+    var data = load();
+    var meta = reviewMeta(kind);
+    var year = "2026";
+    var half = "h2";
+    var yearEl = document.getElementById("year");
+    var halfEl = document.getElementById("half");
+    var gate = document.getElementById("gate");
+    var plan = document.getElementById("plan");
+    var gateTitle = gate.querySelector("h2");
+    var gateLead = gate.querySelector(".lead");
+    function key() { return year + "|" + half; }
+    function current() { return data[key()]; }
+    function render() {
+      var phase = windowPhase(key())[meta.phaseKey];
+      var open = phase === "open";
+      document.getElementById("period-label").textContent =
+        year + " " + halfName(half) + " · " + meta.title + "至 " + formatWindowAt(windowOf(key())[meta.closeKey]);
+      halfEl.querySelectorAll("button").forEach(function (btn) {
+        btn.classList.toggle("on", btn.getAttribute("data-half") === half);
+      });
+      var row = current();
+      if (!row || !row.applied) {
+        gate.hidden = false;
+        gateTitle.textContent = "尚未提报";
+        gateLead.innerHTML = '这个半年还没有提交绩效 S。请先 <a href="submit-s.html">提报绩效 S</a>。';
+        plan.hidden = true;
+        plan.innerHTML = "";
+        return;
+      }
+      var locked = !open;
+      if (meta.phaseKey === "mid" && open) {
+        ensureUpdateLists(row);
+        ensureReviewItemIds(row);
+        if (!row.midReviewBase) {
+          row.midReviewBase = snapshotReviewBase(row);
+          save(data);
+        }
+      }
+      gate.hidden = open;
+      if (!open) {
+        gateTitle.textContent = phase === "before" ? meta.title + "尚未开放" : meta.title + "已截止";
+        gateLead.textContent = reviewWindowText(key(), meta);
+      }
+      plan.hidden = false;
+      plan.innerHTML = updateReviewBody(row, meta, locked) + (open ? updateBarHtml(row, meta) : "") +
+        (meta.phaseKey === "mid" ? reviewLogHtml(row) : "");
+    }
+    yearEl.addEventListener("change", function (e) { year = e.target.value; render(); });
+    halfEl.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-half]");
+      if (!btn) return;
+      half = btn.getAttribute("data-half");
+      render();
+    });
+    bind(plan, current, data, render, null, key);
+    plan.addEventListener("input", function () {
+      var row = current();
+      if (!row) return;
+      var counts = plan.querySelectorAll(".s-form-count");
+      [readyReviewCount(row.bizResults, meta.field), readyReviewCount(row.challenges, meta.field)].forEach(function (n, i) {
+        var el = counts[i];
+        if (!el) return;
+        el.textContent = "已填 " + n + " / 至少 3";
+        el.classList.toggle("is-ok", n >= 3);
+      });
+    });
+    plan.addEventListener("click", function (e) {
+      var del = e.target.closest("[data-update-remove]");
+      if (del) {
+        if (windowPhase(key())[meta.phaseKey] !== "open") return;
+        var row = current();
+        var list = row && row[del.getAttribute("data-update-remove")];
+        var idx = Number(del.getAttribute("data-index"));
+        if (!list || !list[idx] || !list[idx]._added) return;
+        list.splice(idx, 1);
+        save(data);
+        render();
+        return;
+      }
+      if (e.target.id !== "s-submit-update") return;
+      var row = current();
+      if (!row || !row.applied) return;
+      if (windowPhase(key())[meta.phaseKey] !== "open") {
+        window.alert(reviewWindowText(key(), meta));
+        render();
+        return;
+      }
+      var err = validateReviewS(row, meta.field);
+      if (err) {
+        window.alert(err);
+        return;
+      }
+      if (meta.phaseKey === "mid") {
+        ensureReviewItemIds(row);
+        if (!row.midReviewBase) row.midReviewBase = snapshotReviewBase(row);
+        appendReviewLogs(key(), row, row.midReviewBase);
+        row.midReviewBase = snapshotReviewBase(row);
+      }
+      row[meta.timeKey] = new Date().toISOString();
+      save(data);
+      render();
+    });
+    render();
+  }
+
   function mountEdit(root) {
     var data = load();
     var periodKey = periodFromSearch() || latestKey(data);
@@ -1539,6 +2014,30 @@
     }
     bind(el, current, data, render, function () { return false; }, function () { return perfKey; });
     el.addEventListener("click", function (e) {
+      if (e.target.closest("[data-open-log]")) {
+        var openModal = el.querySelector("#s-me-log-modal");
+        if (openModal) openModal.hidden = false;
+        return;
+      }
+      if (e.target.closest("[data-close-log]")) {
+        var closeModal = el.querySelector("#s-me-log-modal");
+        if (closeModal) closeModal.hidden = true;
+        return;
+      }
+      if (e.target.closest("[data-print-me]")) {
+        var row = current();
+        var info = (row && row.info) || {};
+        printPerformance({
+          name: info.name || "",
+          dept: info.dept || "",
+          role: info.role || "",
+          lv: info.lv || "",
+          periodLabel: perfKey ? labelOf(perfKey) : "",
+          bizResults: row && row.bizResults,
+          challenges: row && row.challenges,
+        });
+        return;
+      }
       var periodBtn = e.target.closest("[data-me-period]");
       if (periodBtn) {
         perfKey = periodBtn.getAttribute("data-me-period");
@@ -1613,6 +2112,16 @@
     return years;
   }
 
+  function nextPromotionLv(current) {
+    var m = String(current || "").match(/^LV(\d+)/i);
+    if (!m) return "";
+    return "LV" + (Number(m[1]) + 1) + ".1";
+  }
+
+  function showsNextPromotion(estimate) {
+    return !!(estimate && (estimate.status === "ELIGIBLE_RED" || estimate.status === "ELIGIBLE_YELLOW"));
+  }
+
   function growthLvPathNodes(snap) {
     var current = (snap && snap.lv) || "LV5.1";
     var stayed = [];
@@ -1626,12 +2135,18 @@
     if (!stayed.length) stayed = [current];
     if (stayed.indexOf(current) < 0) stayed.push(current);
     var years = parsePromotionYears(snap && snap.milestonesAll);
-    return stayed.map(function (lv) {
+    var nodes = stayed.map(function (lv) {
       var node = { lv: lv, state: lv === current ? "now" : "done" };
       if (lv === current) node.badge = "当前";
+      else if (years[lv]) node.badge = "已晋升";
       if (years[lv]) node.promoYear = years[lv];
       return node;
     });
+    var nextLv = (snap && snap.nextPromotionLv) || nextPromotionLv(current);
+    if (snap && snap.showNextPromotion && nextLv && nextLv !== current && stayed.indexOf(nextLv) < 0) {
+      nodes.push({ lv: nextLv, state: "goal", badge: "预计" });
+    }
+    return nodes;
   }
 
   function lvLinkHtml(afterState) {
@@ -1664,10 +2179,11 @@
   function fillGrowthLvPath(el, snap) {
     if (!el || !snap) return;
     el.innerHTML = renderGrowthLvPathHtml(snap);
-    el.setAttribute(
-      "aria-label",
-      "晋升路径，仅展示停留过的层级，当前 " + snap.lv
-    );
+    var label = "晋升路径。当前 " + snap.lv;
+    if (snap.showNextPromotion && snap.nextPromotionLv) {
+      label += "，预计 " + snap.nextPromotionLv;
+    }
+    el.setAttribute("aria-label", label);
   }
 
   function recentFourQuarterGrades() {
@@ -1676,6 +2192,22 @@
     var rows = Mock.mineRows().filter(function (r) { return r.approveStatus === "FINISHED"; });
     rows.sort(function (a, b) { return (b.season || 0) - (a.season || 0); });
     return rows.slice(0, 4).map(function (r) { return Mock.gradeLabel(r.bpAchievementEvaluation); }).join(" · ") || "—";
+  }
+
+  function formatEstimatePoint(value) {
+    var n = Number(value);
+    if (isNaN(n)) return "—";
+    if (Math.abs(n - Math.round(n)) < 0.001) return String(Math.round(n));
+    return String(Math.round(n * 10) / 10);
+  }
+
+  function formatEstimateSlot(slot) {
+    var counted = formatEstimatePoint(slot.effectiveScore);
+    if (!slot.display) return "— " + counted;
+    var table = global.PromotionDemo && global.PromotionDemo.SCORE;
+    var own = table ? table[slot.display] : null;
+    if (own == null || Math.abs(own - slot.effectiveScore) > 0.001) return slot.display + " 计分" + counted;
+    return slot.display + " " + counted;
   }
 
   function profileSnapshot() {
@@ -1687,15 +2219,27 @@
     var score = row && row.summary && row.summary.score ? row.summary.score : "—";
     var period = key ? labelOf(key) : "暂无周期";
     var milestonesAll = growthMilestonesAll(period, score);
-    var four = recentFourQuarterGrades();
+    var estimate = global.PromotionDemo && global.PromotionDemo.byEmployeeId
+      ? global.PromotionDemo.byEmployeeId(global.PromotionDemo.defaultEmployeeId)
+      : null;
+    var four = estimate
+      ? estimate.slots.map(formatEstimateSlot).join(" · ")
+      : recentFourQuarterGrades();
+    var nextTitle = estimate ? estimate.statusLabel : "暂无预估";
+    var nextNote = estimate
+      ? "按 " + estimate.lineLevel + " 线预估。平均分 " + estimate.avg.toFixed(3) + "，总分 " + estimate.total.toFixed(1) + "。这是预估，不是正式晋升结果。"
+      : "当前绩效 S " + score + " 分（" + period + "）。";
+    var showNext = showsNextPromotion(estimate);
     return {
       lv: lv,
       isMentor: isMentor,
+      showNextPromotion: showNext,
+      nextPromotionLv: nextPromotionLv(lv),
       currentTitle: "近四期绩效 " + four,
-      currentNote: "2026 年参考分数线 · 仅在新发绩效后刷新；门槛明细不在此展开。",
-      nextGoalLv: "LV6.1",
-      nextTitle: "下一目标 LV6.1",
-      nextNote: "当前绩效 S " + score + " 分（" + period + "）· 达标后进入评审窗口。",
+      currentNote: "已出档四个半年。缺档和无法换算的等级计分按 A。晋升用过的周期计分按 A，这里仍显示原等级。",
+      nextGoalLv: estimate ? estimate.statusLabel : "",
+      nextTitle: nextTitle,
+      nextNote: nextNote,
       milestones: milestonesAll.slice(-4),
       milestonesAll: milestonesAll,
       vpStory: []
@@ -1968,7 +2512,7 @@
       '<div class="lv-path me-lv-path growth-lv-path" id="growth-lv-path" aria-label="晋升路径"></div>' +
       '<div class="me-perf-pair">' +
       '<div class="me-perf-box me-perf-now"><span class="me-perf-label">当前绩效</span><b>' + snap.currentTitle + "</b><p class=\"lead\">" + snap.currentNote + "</p></div>" +
-      '<div class="me-perf-box me-perf-next"><span class="me-perf-label">预计进入</span><b>' + snap.nextTitle + "</b><p class=\"lead\">" + snap.nextNote + "</p></div>" +
+      '<div class="me-perf-box me-perf-next"><span class="me-perf-label">晋升预估</span><b>' + snap.nextTitle + "</b><p class=\"lead\">" + snap.nextNote + "</p></div>" +
       "</div>" +
       '<h3 class="me-growth-title">荣誉与绩效记录 · 全部</h3>' +
       '<ul class="me-milestones me-milestones--full">' + milestonesHtml(snap.milestonesAll) + "</ul>" +
@@ -1979,6 +2523,7 @@
 
   global.SPerf = {
     mountSubmit: mountSubmit,
+    mountUpdate: mountUpdate,
     mountEdit: mountEdit,
     mountMe: mountMe,
     mountDetail: mountDetail,
@@ -1990,6 +2535,8 @@
     loadRows: load,
     labelOf: labelOf,
     formatSubmittedAt: formatSubmittedAt,
+    reviewLogHtml: reviewLogHtml,
+    printPerformance: printPerformance,
     windows: {
       load: loadWindows,
       save: saveWindows,

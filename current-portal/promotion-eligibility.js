@@ -1,6 +1,5 @@
 (function (global) {
-  var SCORE = { S: 2, A: 1.5, "B+": 1, B: 0.5 };
-  var GRADE_RANK = { B: 1, "B+": 2, A: 3, S: 4 };
+  var SCORE = { S: 2, "A+": 1.3, A: 1, B: 0.5 };
 
   var WINDOW = {
     id: "2026-Spring",
@@ -15,12 +14,13 @@
     },
   };
 
-  /** 目标层级晋升绩效线（演示：节选 L4～L7，与计算表量级一致） */
+  /** 当前职级主档的 2026 绩效线。LV1、LV7 表上没有绩效线。 */
   var LEVEL_LINES = {
-    L4: { red: { avg: 1.05, total: 4.2 }, yellow: { avg: 0.95, total: 3.8 } },
-    L5: { red: { avg: 1.125, total: 4.5 }, yellow: { avg: 1.025, total: 4.1 } },
-    L6: { red: { avg: 1.175, total: 4.7 }, yellow: { avg: 1.075, total: 4.3 } },
-    L7: { red: { avg: 1.225, total: 4.9 }, yellow: { avg: 1.125, total: 4.5 } },
+    L2: { red: { avg: 1.075, total: 4.3 } },
+    L3: { red: { avg: 1.15, total: 4.6 } },
+    L4: { red: { avg: 1.225, total: 4.9 }, yellow: { avg: 1.15, total: 4.6 } },
+    L5: { red: { avg: 1.325, total: 5.3 }, yellow: { avg: 1.225, total: 4.9 } },
+    L6: { red: { avg: 1.325, total: 5.3 }, yellow: { avg: 1.225, total: 4.9 } },
   };
 
   var THRESHOLD = {
@@ -125,8 +125,8 @@
     return SCORE[letter] != null ? SCORE[letter] : null;
   }
 
-  function meetsMinB(letter) {
-    return letter && GRADE_RANK[letter] >= GRADE_RANK.B;
+  function meetsLine(avg, total, line) {
+    return !!(line && avg >= line.avg && total >= line.total);
   }
 
   function checkThreshold(emp, targetLevel, cutoff) {
@@ -173,49 +173,41 @@
       var display = emp.grades[cid] || null;
       var missing = !display;
       var normalized = isNormalized(emp, cid);
-      var effectiveLetter = normalized ? "A" : display;
-      var effectiveScore = effectiveLetter ? scoreOf(effectiveLetter) : null;
+      var known = !!(display && SCORE[display] != null);
+      var padded = !normalized && (missing || !known);
+      var effectiveLetter = normalized || padded ? "A" : display;
       return {
         cycleId: cid,
         cycleLabel: WINDOW.cycleLabels[cid] || cid,
         display: display,
         missing: missing,
         normalized: normalized,
+        padded: padded,
         effectiveLetter: effectiveLetter,
-        effectiveScore: effectiveScore,
-        minBOk: display ? meetsMinB(display) : false,
+        effectiveScore: SCORE[effectiveLetter],
       };
     });
   }
 
   function lineStatus(avg, total, lines) {
-    if (avg >= lines.red.avg && total >= lines.red.total) return "ELIGIBLE_RED";
-    if (avg >= lines.yellow.avg && total >= lines.yellow.total) return "ELIGIBLE_YELLOW";
-    var near =
-      (lines.yellow.avg - avg <= 0.08 && lines.yellow.avg - avg > 0) ||
-      (lines.yellow.total - total <= 0.3 && lines.yellow.total - total > 0);
-    if (near) return "NEAR_MISS";
+    if (!lines || !lines.red) return "NO_LINE";
+    if (meetsLine(avg, total, lines.red)) return "ELIGIBLE_RED";
+    if (meetsLine(avg, total, lines.yellow)) return "ELIGIBLE_YELLOW";
     return "BELOW_YELLOW";
   }
 
   var STATUS_LABEL = {
-    ELIGIBLE_RED: "达红线（主动）",
-    ELIGIBLE_YELLOW: "达黄线",
-    NEAR_MISS: "近达标",
-    BELOW_YELLOW: "未达黄线",
-    FAIL_MIN_GRADE: "单期低于 B",
-    BLOCKED_THRESHOLD: "门槛未满足",
-    INSUFFICIENT_CYCLES: "四期不足",
+    ELIGIBLE_RED: "自主晋升",
+    ELIGIBLE_YELLOW: "选拔晋升",
+    BELOW_YELLOW: "不进入晋升区间",
+    NO_LINE: "暂无绩效线",
   };
 
   var STATUS_CLASS = {
     ELIGIBLE_RED: "promo-ok-red",
     ELIGIBLE_YELLOW: "promo-ok-yellow",
-    NEAR_MISS: "promo-warn",
     BELOW_YELLOW: "promo-bad",
-    FAIL_MIN_GRADE: "promo-bad",
-    BLOCKED_THRESHOLD: "promo-muted",
-    INSUFFICIENT_CYCLES: "promo-muted",
+    NO_LINE: "promo-muted",
   };
 
   /** LV5.1 / L5 → 规则表主档 L5 */
@@ -227,74 +219,25 @@
 
   function compute(emp) {
     var target = emp.targetLevel || emp.currentLevel;
-    var ruleKey = ruleLevel(target);
-    var lines = LEVEL_LINES[ruleKey];
-    var threshold = checkThreshold(emp, ruleKey, WINDOW.cutoff);
+    var lineLevel = ruleLevel(emp.currentLevel);
+    var lines = LEVEL_LINES[lineLevel] || null;
     var slots = buildSlots(emp, WINDOW.cycles);
-    var filled = slots.filter(function (s) { return !s.missing; });
-    if (filled.length < 4) {
-      return {
-        employee: emp,
-        targetLevel: target,
-        lines: lines,
-        threshold: threshold,
-        slots: slots,
-        status: "INSUFFICIENT_CYCLES",
-        statusLabel: STATUS_LABEL.INSUFFICIENT_CYCLES,
-        statusClass: STATUS_CLASS.INSUFFICIENT_CYCLES,
-        avg: null,
-        total: null,
-        gap: null,
-      };
-    }
-    if (!threshold.ok) {
-      return {
-        employee: emp,
-        targetLevel: target,
-        lines: lines,
-        threshold: threshold,
-        slots: slots,
-        status: "BLOCKED_THRESHOLD",
-        statusLabel: STATUS_LABEL.BLOCKED_THRESHOLD,
-        statusClass: STATUS_CLASS.BLOCKED_THRESHOLD,
-        avg: null,
-        total: null,
-        gap: null,
-      };
-    }
-    var failMin = slots.some(function (s) { return s.display && !s.minBOk; });
-    if (failMin) {
-      return {
-        employee: emp,
-        targetLevel: target,
-        lines: lines,
-        threshold: threshold,
-        slots: slots,
-        status: "FAIL_MIN_GRADE",
-        statusLabel: STATUS_LABEL.FAIL_MIN_GRADE,
-        statusClass: STATUS_CLASS.FAIL_MIN_GRADE,
-        avg: null,
-        total: null,
-        gap: null,
-      };
-    }
-    var scores = slots.map(function (s) { return s.effectiveScore; });
-    var total = scores.reduce(function (a, b) { return a + b; }, 0);
-    var avg = total / 4;
-    var status = lines ? lineStatus(avg, total, lines) : "BELOW_YELLOW";
-    var gap = lines
+    var total = slots.reduce(function (sum, slot) { return sum + slot.effectiveScore; }, 0);
+    var avg = total / slots.length;
+    var status = lineStatus(avg, total, lines);
+    var gap = lines && lines.red
       ? {
-        avgToYellow: Math.max(0, lines.yellow.avg - avg),
-        totalToYellow: Math.max(0, lines.yellow.total - total),
         avgToRed: Math.max(0, lines.red.avg - avg),
         totalToRed: Math.max(0, lines.red.total - total),
+        avgToYellow: lines.yellow ? Math.max(0, lines.yellow.avg - avg) : null,
+        totalToYellow: lines.yellow ? Math.max(0, lines.yellow.total - total) : null,
       }
       : null;
     return {
       employee: emp,
       targetLevel: target,
+      lineLevel: lineLevel,
       lines: lines,
-      threshold: threshold,
       slots: slots,
       status: status,
       statusLabel: STATUS_LABEL[status] || status,
@@ -307,7 +250,7 @@
 
   function allResults() {
     return EMPLOYEES.map(compute).sort(function (a, b) {
-      var order = { ELIGIBLE_RED: 0, ELIGIBLE_YELLOW: 1, NEAR_MISS: 2, BELOW_YELLOW: 3, FAIL_MIN_GRADE: 4, BLOCKED_THRESHOLD: 5, INSUFFICIENT_CYCLES: 6 };
+      var order = { ELIGIBLE_RED: 0, ELIGIBLE_YELLOW: 1, BELOW_YELLOW: 2, NO_LINE: 3 };
       var da = order[a.status] != null ? order[a.status] : 9;
       var db = order[b.status] != null ? order[b.status] : 9;
       if (da !== db) return da - db;

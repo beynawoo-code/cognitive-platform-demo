@@ -468,6 +468,40 @@
       return;
     }
   });
+  function selectProfValuePoint(name) {
+    if (!profVpChips || !name) return;
+    var matched = null;
+    profVpChips.querySelectorAll("button").forEach(function (item) {
+      if ((item.getAttribute("data-value") || "") === name) matched = item;
+    });
+    if (!matched) {
+      matched = document.createElement("button");
+      matched.type = "button";
+      matched.setAttribute("data-value", name);
+      matched.textContent = name;
+      profVpChips.appendChild(matched);
+    }
+    profVpChips.setAttribute("data-value", name);
+    profVpChips.querySelectorAll("button").forEach(function (item) {
+      item.classList.toggle("on", item === matched);
+    });
+    var vpSel = document.querySelector("select.prof-vp-select");
+    if (vpSel) {
+      var hasOpt = false;
+      Array.prototype.forEach.call(vpSel.options, function (opt) {
+        if (opt.value === name) hasOpt = true;
+      });
+      if (!hasOpt) {
+        var opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        vpSel.appendChild(opt);
+      }
+      vpSel.value = name;
+    }
+  }
+  var vpFromUrl = new URLSearchParams(location.search).get("vp") || "";
+  if (tab === "prof" && vpFromUrl) selectProfValuePoint(vpFromUrl);
   apply();
   window.homeFeedApply = apply;
 </script>

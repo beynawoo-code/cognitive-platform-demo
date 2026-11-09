@@ -216,9 +216,12 @@
   function detailHead(person, period) {
     var row = person.row;
     var when = row && row.submittedAt ? global.SPerf.formatSubmittedAt(row.submittedAt) : "未提交";
+    var midWhen = row && row.submittedMidAt ? global.SPerf.formatSubmittedAt(row.submittedMidAt) : "未更新";
+    var finWhen = row && row.submittedFinalAt ? global.SPerf.formatSubmittedAt(row.submittedFinalAt) : "未更新";
     return '<div class="card"><h2>' + escapeText(person.name) + " · " + escapeText(global.SPerf.labelOf(period)) + "</h2>" +
       '<p class="lead">' + escapeText(person.dept) + " · " + escapeText(person.role) +
-      (person.lv ? " · " + escapeText(person.lv) : "") + " · " + statusOf(row).text + " · " + escapeText(when) + "</p>";
+      (person.lv ? " · " + escapeText(person.lv) : "") + " · " + statusOf(row).text + " · 提报 " + escapeText(when) +
+      " · 中期 " + escapeText(midWhen) + " · 最终 " + escapeText(finWhen) + "</p>";
   }
   function validateWindow(win) {
     function ts(value) {
@@ -266,8 +269,8 @@
         var q = state.q.trim();
         if (q && person.name.indexOf(q) < 0) return false;
         var key = statusOf(person.row).key;
-        if (state.status === "mid") return hasField(person.row, "resultMid");
-        if (state.status === "final") return hasField(person.row, "resultFinal");
+        if (state.status === "mid") return !!(person.row && person.row.submittedMidAt);
+        if (state.status === "final") return !!(person.row && person.row.submittedFinalAt);
         if (state.status === "all") return true;
         return key === state.status;
       });
@@ -284,9 +287,10 @@
         var row = person.row;
         return "<tr><td>" + escapeText(person.name) + "</td><td>" + escapeText(person.dept) + "</td><td>" + escapeText(person.role) +
           "</td><td>" + statusOf(row).text + "</td><td>" + escapeText(row && row.submittedAt ? global.SPerf.formatSubmittedAt(row.submittedAt) : "—") +
-          "</td><td>" + (hasField(row, "resultMid") ? "已填" : "未填") +
-          "</td><td>" + (hasField(row, "resultFinal") ? "已填" : "未填") +
-          '</td><td><a class="chip" href="s-perf-detail.html?period=' + encodeURIComponent(state.period) +
+          "</td><td>" + (row && row.submittedMidAt ? escapeText(global.SPerf.formatSubmittedAt(row.submittedMidAt)) : "未更新") +
+          "</td><td>" + (row && row.submittedFinalAt ? escapeText(global.SPerf.formatSubmittedAt(row.submittedFinalAt)) : "未更新") +
+          '</td><td><button type="button" class="chip" data-print-id="' + escapeAttr(person.id) + '">打印</button> ' +
+          '<a class="chip" href="s-perf-detail.html?period=' + encodeURIComponent(state.period) +
           "&id=" + encodeURIComponent(person.id) + '">查看</a></td></tr>';
       }).join("");
       function field(name, label) {
@@ -325,11 +329,29 @@
         "</select>" +
         '<input data-q placeholder="搜索姓名" value="' + escapeAttr(state.q) + '">' +
         '<span class="lead">当前列表 ' + list.length + " 人，已提报 " + submitted + " 人</span></div>" +
-        '<div class="card"><table><tr><th>姓名</th><th>部门</th><th>职位</th><th>状态</th><th>提报时间</th><th>中期</th><th>最终</th><th></th></tr>' +
+        '<div class="card"><table><tr><th>姓名</th><th>部门</th><th>职位</th><th>状态</th><th>提报时间</th><th>中期提交</th><th>最终提交</th><th></th></tr>' +
         (rows || '<tr><td colspan="8">没有匹配的人员。</td></tr>') +
         "</table></div>";
     }
     root.addEventListener("click", function (e) {
+      var printBtn = e.target.closest("[data-print-id]");
+      if (printBtn && global.SPerf.printPerformance) {
+        var printed = people(state.period, false).filter(function (item) {
+          return item.id === printBtn.getAttribute("data-print-id");
+        })[0];
+        if (printed) {
+          global.SPerf.printPerformance({
+            name: printed.name,
+            dept: printed.dept,
+            role: printed.role,
+            lv: printed.lv || "",
+            periodLabel: global.SPerf.labelOf(state.period),
+            bizResults: printed.row && printed.row.bizResults,
+            challenges: printed.row && printed.row.challenges,
+          });
+        }
+        return;
+      }
       var periodBtn = e.target.closest("[data-period]");
       if (periodBtn) {
         state.period = periodBtn.getAttribute("data-period");
@@ -379,40 +401,26 @@
 
   function mountInbox(root) {
     if (!root || !global.SPerf) return;
-    var state = { period: "2026|h2", openId: "", note: "" };
+    var known = global.SPerf.windows.periods();
+    var fromUrl = queryParam("period");
+    var state = { period: known.indexOf(fromUrl) >= 0 ? fromUrl : "2026|h2" };
     function render() {
-      var phase = global.SPerf.windows.phase(state.period);
       var list = people(state.period, true);
-      var periods = global.SPerf.windows.periods().map(function (key) {
+      var periods = known.map(function (key) {
         return '<button type="button" class="chip' + (key === state.period ? " on" : "") + '" data-period="' + escapeAttr(key) + '">' +
           escapeText(global.SPerf.labelOf(key)) + "</button>";
       }).join("");
       var rows = list.map(function (person) {
         var row = person.row;
+        var href = "s-leader-detail.html?period=" + encodeURIComponent(state.period) +
+          "&id=" + encodeURIComponent(person.id);
         return "<tr><td>" + escapeText(person.name) + "</td><td>" + escapeText(person.dept) + "</td><td>" + escapeText(person.role) +
           "</td><td>" + statusOf(row).text + "</td><td>" + (hasField(row, "resultMid") ? "已填" : "未填") +
           "</td><td>" + (hasField(row, "resultFinal") ? "已填" : "未填") +
           "</td><td>" + (hasField(row, "feedbackMid") ? "已反馈" : "未反馈") +
           "</td><td>" + (hasField(row, "feedbackFinal") ? "已反馈" : "未反馈") +
-          '</td><td><button type="button" class="chip" data-open="' + escapeAttr(person.id) + '">' +
-          (state.openId === person.id ? "收起" : "查看") + "</button></td></tr>";
+          '</td><td><a class="chip" href="' + escapeAttr(href) + '">查看</a></td></tr>';
       }).join("");
-      var opened = list.filter(function (person) { return person.id === state.openId; })[0];
-      var detail = "";
-      if (opened) {
-        if (!opened.row || statusOf(opened.row).key === "none") {
-          detail = detailHead(opened, state.period) + "<p>尚未提报，不能填写反馈。</p></div>";
-        } else {
-          detail = detailHead(opened, state.period) +
-            "<p class=\"lead\">中期回顾和最终结果只读。中期反馈" + (phase.mid === "open" ? "当前可写" : "当前锁定") +
-            "，最终反馈" + (phase.final === "open" ? "当前可写" : "当前锁定") + "。</p></div>" +
-            '<div class="card" id="s-leader-detail">' +
-            leaderBlock(opened, state.period, "预期业绩结果", "bizResults", texts(opened.row, "bizResults")) +
-            leaderBlock(opened, state.period, "挑战", "challenges", texts(opened.row, "challenges")) +
-            (state.note ? '<p class="s-admin-saved">' + escapeText(state.note) + "</p>" : "") +
-            "</div>";
-        }
-      }
       root.innerHTML =
         '<p class="route">主管 · 绩效 S 接收</p><h1>绩效 S 接收</h1>' +
         '<p class="lead">查看团队员工的中期回顾和最终结果，并在对应窗口内填写中期反馈、最终反馈。不修改员工原文。</p>' +
@@ -420,46 +428,92 @@
         global.SPerf.windows.hint(state.period, false) +
         '<div class="card"><table><tr><th>姓名</th><th>部门</th><th>职位</th><th>状态</th><th>中期回顾</th><th>最终结果</th><th>中期反馈</th><th>最终反馈</th><th></th></tr>' +
         (rows || '<tr><td colspan="9">这个周期没有团队成员。</td></tr>') +
-        "</table></div>" + detail;
+        "</table></div>";
     }
     root.addEventListener("click", function (e) {
       var periodBtn = e.target.closest("[data-period]");
-      if (periodBtn) {
-        state.period = periodBtn.getAttribute("data-period");
-        state.openId = "";
+      if (!periodBtn) return;
+      state.period = periodBtn.getAttribute("data-period");
+      render();
+    });
+    render();
+  }
+
+  function mountLeaderDetail(root) {
+    if (!root || !global.SPerf) return;
+    var known = global.SPerf.windows.periods();
+    var fromUrl = queryParam("period");
+    var period = known.indexOf(fromUrl) >= 0 ? fromUrl : "2026|h2";
+    var id = queryParam("id");
+    var state = { note: "", error: "" };
+    function backHref() {
+      return "s-leader-inbox.html?period=" + encodeURIComponent(period);
+    }
+    function render() {
+      var back = '<p class="lead"><a href="' + escapeAttr(backHref()) + '">← 返回绩效 S 接收</a></p>';
+      var person = people(period, true).filter(function (item) { return item.id === id; })[0];
+      if (!person) {
+        root.innerHTML = back + '<div class="card"><p>未找到这个员工。</p></div>';
+        return;
+      }
+      var empty = !person.row || statusOf(person.row).key === "none";
+      if (empty) {
+        root.innerHTML = back + detailHead(person, period) + "<p>尚未提报，不能填写反馈。</p></div>";
+        return;
+      }
+      var phase = global.SPerf.windows.phase(period);
+      var canMid = phase.mid === "open";
+      var canFinal = phase.final === "open";
+      var toolbar = "";
+      if (canMid || canFinal) {
+        toolbar = '<div class="s-admin-toolbar"><button type="submit" class="btn">保存</button>' +
+          (state.note ? '<span class="s-admin-saved">' + escapeText(state.note) + "</span>" : "") +
+          (state.error ? '<span class="s-admin-error">' + escapeText(state.error) + "</span>" : "") +
+          "</div>";
+      }
+      root.innerHTML = back +
+        detailHead(person, period) +
+        '<p class="lead">中期回顾和最终结果只读。中期反馈' + (canMid ? "当前可写" : "当前锁定") +
+        "，最终反馈" + (canFinal ? "当前可写" : "当前锁定") + "。</p></div>" +
+        '<form class="card" id="s-leader-feedback">' +
+        leaderBlock(person, period, "预期业绩结果", "bizResults", texts(person.row, "bizResults")) +
+        leaderBlock(person, period, "挑战", "challenges", texts(person.row, "challenges")) +
+        toolbar +
+        "</form>";
+    }
+    root.addEventListener("submit", function (e) {
+      if (!e.target || e.target.id !== "s-leader-feedback") return;
+      e.preventDefault();
+      var phase = global.SPerf.windows.phase(period);
+      var roster = loadRoster();
+      var stored = roster[id];
+      var row = stored && stored.periods && stored.periods[period];
+      if (!row || !row.applied) {
+        state.error = "尚未提报，不能填写反馈。";
         state.note = "";
         render();
         return;
       }
-      var openBtn = e.target.closest("[data-open]");
-      if (!openBtn) return;
-      var id = openBtn.getAttribute("data-open");
-      state.openId = state.openId === id ? "" : id;
-      state.note = "";
-      render();
-    });
-    root.addEventListener("input", function (e) {
-      var el = e.target;
-      var field = el.getAttribute("data-fb");
-      if (!field) return;
-      var phase = global.SPerf.windows.phase(state.period);
-      if (field === "feedbackMid" && phase.mid !== "open") return;
-      if (field === "feedbackFinal" && phase.final !== "open") return;
-      var roster = loadRoster();
-      var person = roster[el.getAttribute("data-person")];
-      var row = person && person.periods && person.periods[state.period];
-      var list = row && row[el.getAttribute("data-list")];
-      var item = list && list[Number(el.getAttribute("data-index"))];
-      if (!item) return;
-      item[field] = el.value;
-      saveRoster(roster);
-      state.note = "反馈已保存。";
-      var note = root.querySelector("#s-leader-detail .s-admin-saved");
-      if (note) note.textContent = state.note;
-      else {
-        var box = root.querySelector("#s-leader-detail");
-        if (box) box.insertAdjacentHTML("beforeend", '<p class="s-admin-saved">' + escapeText(state.note) + "</p>");
+      if (phase.mid !== "open" && phase.final !== "open") {
+        state.error = "当前窗口未开放，不能保存反馈。";
+        state.note = "";
+        render();
+        return;
       }
+      e.target.querySelectorAll("textarea[data-fb]").forEach(function (el) {
+        if (el.disabled) return;
+        var field = el.getAttribute("data-fb");
+        if (field === "feedbackMid" && phase.mid !== "open") return;
+        if (field === "feedbackFinal" && phase.final !== "open") return;
+        var list = row[el.getAttribute("data-list")];
+        var item = list && list[Number(el.getAttribute("data-index"))];
+        if (!item) return;
+        item[field] = el.value;
+      });
+      saveRoster(roster);
+      state.error = "";
+      state.note = "反馈已保存。";
+      render();
     });
     render();
   }
@@ -482,10 +536,28 @@
       : '<p class="lead">只读。主管反馈由主管在绩效接收页填写。</p></div>' +
         '<div class="card">' + readBlock("预期业绩结果", texts(person.row, "bizResults")) +
         readBlock("挑战", texts(person.row, "challenges")) + "</div>";
+    var logHtml = !empty && global.SPerf.reviewLogHtml
+      ? '<div class="card">' + global.SPerf.reviewLogHtml(person.row) + "</div>"
+      : "";
     root.innerHTML =
       '<p class="route">HRBP · 绩效 S 详情</p>' +
-      '<p class="lead"><a href="' + escapeAttr(back) + '">← 返回绩效 S 管理</a></p>' +
-      detailHead(person, period) + body;
+      '<p class="lead s-print-actions"><a href="' + escapeAttr(back) + '">← 返回绩效 S 管理</a>' +
+      '<button type="button" class="chip" id="s-print-detail">打印</button></p>' +
+      detailHead(person, period) + body + logHtml;
+    var detailPrint = root.querySelector("#s-print-detail");
+    if (detailPrint && global.SPerf.printPerformance) {
+      detailPrint.addEventListener("click", function () {
+        global.SPerf.printPerformance({
+          name: person.name,
+          dept: person.dept,
+          role: person.role,
+          lv: person.lv || "",
+          periodLabel: global.SPerf.labelOf(period),
+          bizResults: person.row && person.row.bizResults,
+          challenges: person.row && person.row.challenges,
+        });
+      });
+    }
   }
 
   function directory() {
@@ -494,5 +566,11 @@
     });
   }
 
-  global.SPerfAdmin = { mountAdmin: mountAdmin, mountInbox: mountInbox, mountDetail: mountDetail, directory: directory };
+  global.SPerfAdmin = {
+    mountAdmin: mountAdmin,
+    mountInbox: mountInbox,
+    mountLeaderDetail: mountLeaderDetail,
+    mountDetail: mountDetail,
+    directory: directory
+  };
 })(window);

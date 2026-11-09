@@ -58,7 +58,7 @@
         '<div class="search">搜索专业、案例、课程</div>' +
         '<div class="tools">' +
           '<details class="drop"><summary class="cta">提报</summary><div class="menu">' +
-            '<a href="submit-learning-plan.html">提报学习计划</a><a href="submit-bda.html">提报 BDA</a><a href="submit-material.html">提报素材</a><a href="submit-s.html">提报绩效 S</a><a href="s-leader-inbox.html">绩效 S 接收</a></div></details>' +
+            '<a href="submit-bda.html">提报 BDA</a><a href="submit-material.html">提报素材</a><a href="submit-s.html">提报绩效 S</a><a href="update-s-mid.html">中期回顾</a><a href="update-s-final.html">最终结果</a><a href="s-leader-inbox.html">绩效 S 接收</a></div></details>' +
           '<a class="icon' + (active === "exam" ? " on" : "") + '" href="exam-home.html" aria-label="考试中心">考<i>考</i></a>' +
           '<a class="icon' + (active === "mall" ? " on" : "") + '" href="mall-home.html" aria-label="积分商城">积<i class="hot">积</i></a>' +
           '<a class="icon' + (active === "inbox" ? " on" : "") + '" href="inbox.html" aria-label="通知中心">讯<i class="bell">2</i></a>' +

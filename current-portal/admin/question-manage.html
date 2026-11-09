@@ -12,10 +12,38 @@
 <main class="main">
 <p class="route">现网路由 <b>/operate/questionManage</b> · 静态可视化 · 假数据</p>
 <h1>试题管理</h1>
-<p class="lead">题库维护。用户提报的题在此审核。</p>
-<div class="card"><table><tr><th>题干</th><th>来源</th><th>状态</th></tr><tr><td>过定位会带来什么</td><td>用户提报</td><td>待审</td></tr><tr><td>公差带如何选取</td><td>运营录入</td><td>启用</td></tr></table></div>
+<p class="lead">题库维护。用户提报的题在此审核。已确认的价值点 AI 试题也会出现在这里。</p>
+<div class="card">
+<table>
+<thead><tr><th>题干</th><th>来源</th><th>状态</th></tr></thead>
+<tbody id="question-rows">
+<tr><td>过定位会带来什么</td><td>用户提报</td><td>待审</td></tr>
+<tr><td>公差带如何选取</td><td>运营录入</td><td>启用</td></tr>
+</tbody>
+</table>
+<p class="lead" id="aiq-hint">价值点 AI 试题确认后会出现在上表。</p>
+</div>
 
 </main>
 <script src="../chrome.js"></script>
+<script src="ai-question-bank.js"></script>
+<script>
+(function () {
+  var body = document.getElementById("question-rows");
+  var hint = document.getElementById("aiq-hint");
+  if (!body || !window.AiQuestionBank) return;
+  var rows = AiQuestionBank.confirmedQuestions();
+  rows.forEach(function (row) {
+    var tr = document.createElement("tr");
+    ["stem", "source", "status"].forEach(function (key) {
+      var td = document.createElement("td");
+      td.textContent = row[key];
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+  if (hint) hint.hidden = rows.length > 0;
+})();
+</script>
 </body>
 </html>

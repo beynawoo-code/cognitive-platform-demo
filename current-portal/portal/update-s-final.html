@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>最终结果</title>
+  <link rel="stylesheet" href="../portal.css" />
+  <link rel="stylesheet" href="../admin.css" />
+</head>
+<body data-shell="portal" data-active="home">
+<div id="chrome"></div>
+<main class="main">
+<h1>最终结果</h1>
+
+<div class="card s-bar">
+  <label>自然年</label>
+  <select id="year"><option>2026</option><option>2025</option></select>
+  <div class="goal-seg" id="half" role="radiogroup" aria-label="半年">
+    <button type="button" data-half="h1">上半年</button>
+    <button type="button" data-half="h2" class="on">下半年</button>
+  </div>
+  <span class="s-hint" id="period-label"></span>
+</div>
+
+<div class="card" id="gate">
+  <h2>尚未提报</h2>
+  <p class="lead">这个半年还没有提交绩效 S。</p>
+</div>
+
+<div id="plan"></div>
+</main>
+<script src="bda-report-mock.js"></script>
+<script src="s-perf.js"></script>
+<script>SPerf.mountUpdate("final");</script>
+<script src="../chrome.js"></script>
+</body>
+</html>

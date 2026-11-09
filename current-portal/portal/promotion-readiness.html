@@ -28,10 +28,9 @@
     return;
   }
   var e = r.employee;
-  var W = PromotionDemo.WINDOW;
   document.getElementById("intro").innerHTML =
     "<b>" + PromotionDemo.escapeText(e.name) + "</b> · " + PromotionDemo.escapeText(e.dept) +
-    " · 窗口 " + W.label + "（截止 " + W.cutoff + "）· 目标 " + PromotionDemo.escapeText(r.targetLevel);
+    " · 当前 " + PromotionDemo.escapeText(e.currentLevel) + " · 按 " + PromotionDemo.escapeText(r.lineLevel) + " 线预估";
 
   function bar(value, max, cls) {
     var pct = Math.min(100, Math.round((value / max) * 100));
@@ -39,38 +38,40 @@
   }
 
   function linesBlock() {
-    if (!r.lines) return "";
+    if (!r.lines || !r.lines.red) return "<div class=\"card\"><h2>与红线 / 黄线对比</h2><p class=\"lead\">当前职级没有绩效线，这次不做绩效预估。</p></div>";
     var y = r.lines.yellow;
     var rd = r.lines.red;
     var avg = r.avg != null ? r.avg : 0;
     var tot = r.total != null ? r.total : 0;
+    var yellowAvg = y ? "黄线 ≥ " + y.avg + " · " : "";
+    var yellowTotal = y ? "黄线 ≥ " + y.total + " · " : "";
+    var gap = "";
+    if (r.gap && y && r.gap.avgToYellow != null) {
+      gap = "<p class=\"lead promo-gap\">距黄线：均值还差 " + r.gap.avgToYellow.toFixed(3) +
+        "，总分还差 " + r.gap.totalToYellow.toFixed(1) + "</p>";
+    }
     return "<div class=\"card promo-lines\">" +
       "<h2>与红线 / 黄线对比</h2>" +
       "<div class=\"promo-line-row\"><span>均值</span><b>" + (r.avg != null ? r.avg.toFixed(3) : "—") + "</b>" +
       (r.avg != null ? bar(avg, rd.avg, "promo-bar-red") : "") +
-      "<p class=\"lead\">黄线 ≥ " + y.avg + " · 红线 ≥ " + rd.avg + "</p></div>" +
+      "<p class=\"lead\">" + yellowAvg + "红线 ≥ " + rd.avg + "</p></div>" +
       "<div class=\"promo-line-row\"><span>总分</span><b>" + (r.total != null ? r.total.toFixed(1) : "—") + "</b>" +
       (r.total != null ? bar(tot, rd.total, "promo-bar-red") : "") +
-      "<p class=\"lead\">黄线 ≥ " + y.total + " · 红线 ≥ " + rd.total + "</p></div>" +
-      (r.gap ? "<p class=\"lead promo-gap\">距黄线：均值还差 " + r.gap.avgToYellow.toFixed(3) +
-        "，总分还差 " + r.gap.totalToYellow.toFixed(1) + "</p>" : "") +
+      "<p class=\"lead\">" + yellowTotal + "红线 ≥ " + rd.total + "</p></div>" +
+      gap +
       "</div>";
   }
 
   function thresholdBlock() {
-    var items = r.threshold.items.map(function (it) {
-      return "<li class=\"" + (it.ok ? "ok" : "bad") + "\"><span>" + PromotionDemo.escapeText(it.label) + "</span>" +
-        "<small>" + PromotionDemo.escapeText(it.detail) + "</small></li>";
-    }).join("");
-    return "<div class=\"card\"><h2>门槛条件</h2><ul class=\"promo-checklist\">" + items + "</ul></div>";
+    return "<div class=\"card\"><h2>年限</h2><p class=\"lead\">毕业年限、距上次晋升、入职年限不参与这次预估。</p></div>";
   }
 
   function cyclesBlock() {
     var cards = r.slots.map(function (s) {
       var sc = s.effectiveScore != null ? s.effectiveScore.toFixed(1) : "—";
       var note = s.normalized
-        ? "<p class=\"promo-slot-note\">计分按 <b>A（1.5）</b>，原档 " + PromotionDemo.escapeText(s.display) + " 不变</p>"
-        : (s.missing ? "<p class=\"promo-slot-note\">该期尚未出档</p>" : "<p class=\"promo-slot-note\">计分 " + sc + "</p>");
+        ? "<p class=\"promo-slot-note\">计分按 <b>A（1）</b>，原档 " + PromotionDemo.escapeText(s.display) + " 不变</p>"
+        : (s.padded ? "<p class=\"promo-slot-note\">缺档或无法换算，计分按 <b>A（1）</b></p>" : "<p class=\"promo-slot-note\">计分 " + sc + "</p>");
       return "<div class=\"promo-slot\">" +
         "<span class=\"promo-slot-cycle\">" + PromotionDemo.escapeText(s.cycleLabel) + "</span>" +
         PromotionDemo.gradeChip(s) +
@@ -85,7 +86,7 @@
   var statusCard =
     "<div class=\"card promo-status-card\">" +
     "<span class=\"promo-pill " + r.statusClass + " promo-pill-lg\">" + PromotionDemo.escapeText(r.statusLabel) + "</span>" +
-    "<p class=\"lead\">以上为规则演算结果，最终以 HR 晋升窗口通知为准。单期下限仍校验<b>原档</b>是否 ≥ B。</p>" +
+    "<p class=\"lead\">这是预估，不是正式晋升结果。平均分和总分要同时达到同一条线。</p>" +
     "</div>";
 
   if (id !== PromotionDemo.defaultEmployeeId) {

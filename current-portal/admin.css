@@ -13,3 +13,16 @@ body[data-shell="admin"] .main { margin-left: 220px; max-width: none; }
   .side { position: relative; width: auto; }
   body[data-shell="admin"] .main { margin-left: 0; }
 }
+.aiq-rules { margin: 0 0 14px; padding-left: 18px; color: var(--ink-700); font-size: 13px; }
+.aiq-rules li { margin: 4px 0; }
+.aiq-point h2 .tag { margin-left: 8px; vertical-align: 1px; }
+.aiq-batch { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+.aiq-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.aiq-head b { margin-right: auto; }
+.aiq-head .tag { white-space: nowrap; }
+.aiq-batch summary { margin-top: 8px; cursor: pointer; font-weight: 700; color: var(--ink-700); }
+.aiq-q { margin: 8px 0 0; padding-left: 18px; }
+.aiq-q > li { margin: 10px 0; }
+.aiq-q p { margin: 0; }
+.aiq-options { margin: 4px 0 0; padding-left: 0; list-style: none; color: var(--ink-700); }
+.aiq-options .is-answer { font-weight: 700; color: var(--ink-900); }
